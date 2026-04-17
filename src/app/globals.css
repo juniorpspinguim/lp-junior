@@ -1,26 +1,108 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-primary-500: #FFA500;
+  /* Laranja/Dourado - Foco/Destaque */
+  --color-primary-600: #E69500;
+  --color-dark-900: #0D0D12;
+  /* Fundo escuro premium */
+  --color-dark-800: #1A1A24;
+  --color-dark-700: #262635;
+  --color-light-100: #F8FAFC;
+  --color-light-200: #E2E8F0;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-heading: "Outfit", system-ui, sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    @apply bg-dark-900 text-light-100 font-sans antialiased selection:bg-primary-500/30 selection:text-primary-500;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading tracking-tight;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .glass {
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-yellow-300;
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+}
+
+@keyframes swap-1 {
+
+  0%,
+  45% {
+    opacity: 1;
+    transform: translateY(0);
+    z-index: 10;
+    pointer-events: auto;
+  }
+
+  50%,
+  100% {
+    opacity: 0;
+    transform: translateY(-15px);
+    z-index: -10;
+    pointer-events: none;
+  }
+}
+
+@keyframes swap-2 {
+
+  0%,
+  45% {
+    opacity: 0;
+    transform: translateY(15px);
+    z-index: -10;
+    pointer-events: none;
+  }
+
+  50%,
+  95% {
+    opacity: 1;
+    transform: translateY(0);
+    z-index: 10;
+    pointer-events: auto;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-15px);
+    z-index: -10;
+    pointer-events: none;
+  }
+}
+
+@keyframes sweep {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 200%;
+  }
 }
