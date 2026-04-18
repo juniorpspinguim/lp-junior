@@ -21,6 +21,7 @@ const nextConfig: NextConfig = {
             value: 'SAMEORIGIN'
           },
           {
+            onde
             key: 'X-Content-Type-Options',
             value: 'nosniff'
           },
