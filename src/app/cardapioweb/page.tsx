@@ -556,7 +556,7 @@ export default function ApresentacaoCardapioWebPage() {
                 {[
                   {
                     title: "Eventos Setoriais",
-                    desc: "Representação ativa nas maiores feiras e encontros de gastronomia, atuando como embaixador da plataforma em networking qualitativo.",
+                    desc: "Presença em eventos relevantes do setor gastronômico, promovendo networking qualificado e identificação de oportunidades de mercado, com conexão natural entre as demandas do público e as soluções da parceria.",
                     highlight: "Presença Ativa"
                   },
                   {
@@ -611,7 +611,7 @@ export default function ApresentacaoCardapioWebPage() {
                     </div>
                     <h3 className="text-xl font-bold">Bloqueado</h3>
                   </div>
-                  <p className="text-slate-300 font-light">Todas as plataformas de <strong className="text-white">cardápio digital</strong> e delivery direto. Concorrência blindada.</p>
+                  <p className="text-slate-300 font-light">Todas as plataformas de <strong className="text-white">cardápio digital</strong>. Concorrência blindada.</p>
                 </motion.div>
 
                 <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }}
@@ -643,8 +643,7 @@ export default function ApresentacaoCardapioWebPage() {
                   {[
                     "Criação de páginas de captura dedicadas otimizadas.",
                     "Integração estratégica nas campanhas do Júnior.",
-                    "Disparo para a base quente do Clube do Pinguim.",
-                    "Acesso estratégico aos leads com setup comercial."
+                    "Disparo para a base quente do Clube do Pinguim."
                   ].map((text, i) => (
                     <motion.div key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 + i * 0.1 }}
                       className="flex items-center gap-4 bg-white/[0.02] border border-white/5 rounded-2xl p-4">
