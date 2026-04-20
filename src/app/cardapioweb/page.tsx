@@ -548,7 +548,7 @@ export default function ApresentacaoCardapioWebPage() {
                 </motion.h2>
                 <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
                   className="text-slate-400 text-lg max-w-2xl mx-auto font-light">
-                  Pontos de contato físicos que cimentam a marca no mercado e geram conversas de alto valor com diretores e CEOs de restaurantes.
+                  Pontos de contato físicos que fortalecem a marca no mercado e geram conversas de alto valor com diretores e CEOs de restaurantes.
                 </motion.p>
               </div>
 
