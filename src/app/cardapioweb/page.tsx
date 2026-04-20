@@ -521,7 +521,7 @@ export default function ApresentacaoCardapioWebPage() {
                   { icon: Video, title: "4 Reels Mensais", desc: "Conteúdo estratégico focado em conversão e collab no Instagram." },
                   { icon: Star, title: "Autoridade em Anúncios", desc: "Uso da imagem do Júnior em tráfego pago focado na região Salvador e Bahia." },
                   { icon: Mic, title: "Participação no CW Cast", desc: "05 episódios dedicados ao Cardápio Web com participação de empresários do setor gastronômico local e um co-host do Cardápio Web." },
-                  { icon: Target, title: "Patrocínio de Podcast", desc: "Logo e inserções fixas nos episódios como parceiro oficial e patrocinador." },
+                  { icon: Target, title: "Patrocínio de Podcast", desc: "Logo e inserções fixas nos episódios como parceiro oficial e patrocinador (após os 5 episódios do CW cast)." },
                 ].map((item, i) => (
                   <GlassCard key={i} delay={0.3 + i * 0.1} className="!p-5 flex items-center gap-5">
                     <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
