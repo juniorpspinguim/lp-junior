@@ -36,11 +36,11 @@ const slides = [
   { id: 2, type: "about_junior" },
   { id: 3, type: "about_clube" },
   { id: 4, type: "opportunity" },
-  { id: 5, type: "partnership" },
-  { id: 6, type: "activations" },
-  { id: 7, type: "exclusivity" },
-  { id: 8, type: "leads" },
-  { id: 9, type: "branding" },
+  { id: 5, type: "activations" },
+  { id: 6, type: "exclusivity" },
+  { id: 7, type: "leads" },
+  { id: 8, type: "branding" },
+  { id: 9, type: "partnership" },
   { id: 10, type: "final" },
 ];
 
