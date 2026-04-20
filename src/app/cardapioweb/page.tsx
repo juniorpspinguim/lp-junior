@@ -305,7 +305,7 @@ export default function ApresentacaoCardapioWebPage() {
                 <div className="space-y-6 mt-8">
                   {[
                     "Referência em Salvador e região no marketing gastronômico, com acesso direto a donos de restaurantes e parceiros como: Membro da Abrasel Bahia, parceria com contabilidades, empresas de treinamentos e demais prestadores envolvidos no nicho.",
-                    "Especialista em crescimento e performance: do tráfego pago à engenharia de cardápio, entrega estratégias que convertem em vendas reais.",
+                    "Especialista em crescimento e performance: do tráfego pago à análise de dados, entrega estratégias que convertem em vendas reais.",
                     "Relacionamento próximo com o mercado: construído ao longo de anos de atuação intensa e resultados documentados.",
                     "Capaz de gerar demanda qualificada para o Cardápio Web, tanto na aquisição direta quanto na influência de ferramentas."
                   ].map((text, i) => (
@@ -520,7 +520,7 @@ export default function ApresentacaoCardapioWebPage() {
                 {[
                   { icon: Video, title: "4 Reels Mensais", desc: "Conteúdo estratégico focado em conversão e collab no Instagram." },
                   { icon: Star, title: "Autoridade em Anúncios", desc: "Uso da imagem do Júnior em tráfego pago focado na região Salvador e Bahia." },
-                  { icon: Mic, title: "Participação em Podcast", desc: "Episódios dedicados à engenharia de cardápio e autonomia de pedidos." },
+                  { icon: Mic, title: "Participação no CW Cast", desc: "05 episódios dedicados ao Cardápio Web com participação de empresários do setor gastronômico local e um co-host do Cardápio Web." },
                   { icon: Target, title: "Patrocínio de Podcast", desc: "Logo e inserções fixas nos episódios como parceiro oficial e patrocinador." },
                 ].map((item, i) => (
                   <GlassCard key={i} delay={0.3 + i * 0.1} className="!p-5 flex items-center gap-5">
