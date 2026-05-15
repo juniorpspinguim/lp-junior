@@ -256,7 +256,7 @@ function SlideCapa({ proposal }: { proposal: Proposal }) {
         Uma estrutura pensada para integrar salão, delivery e canais digitais em uma operação mais previsível e lucrativa.
       </p>
 
-      <div className="flex items-center gap-4 bg-white/[0.04] border border-white/10 px-6 py-4 rounded-2xl backdrop-blur-md shadow-2xl">
+      <div className="flex items-center gap-4 bg-white/[0.04] border border-[#D4AF37]/40 px-6 py-4 rounded-2xl backdrop-blur-md shadow-[0_0_20px_rgba(212,175,55,0.1)]">
         {proposal.logo_url && (
           <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center overflow-hidden shrink-0">
             <img src={proposal.logo_url} alt={proposal.restaurant_name} className="w-full h-full object-contain p-1" />
