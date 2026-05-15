@@ -135,8 +135,8 @@ export default function PresentationViewer({ proposal, services }: PresentationV
     >
       {/* Background Glow Fixo */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-[#D4AF37]/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 w-[400px] h-[300px] bg-[#D4AF37]/3 rounded-full blur-[100px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-[#0047FF]/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[300px] bg-[#0047FF]/8 rounded-full blur-[100px]" />
       </div>
 
       <AnimatePresence>
@@ -146,19 +146,19 @@ export default function PresentationViewer({ proposal, services }: PresentationV
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#0D0D12]/80 backdrop-blur-md border-b border-white/5"
+            className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-white/5 backdrop-blur-md border-b border-white/10"
           >
             <Image src="/logo-pinguim.png" alt="Pinguim" width={100} height={30} className="object-contain brightness-0 invert" />
             
             <div className="flex items-center gap-4">
               <div className="hidden sm:flex gap-1 text-xs font-medium text-slate-400">
                 {Array.from({ length: totalSlides }).map((_, i) => (
-                  <div key={i} className={`h-1 w-6 rounded-full transition-colors ${currentSlide === i ? 'bg-[#D4AF37]' : 'bg-white/10'}`} />
+                  <div key={i} className={`h-1.5 w-8 rounded-full transition-colors ${currentSlide === i ? 'bg-[#0047FF]' : 'bg-white/20'}`} />
                 ))}
               </div>
               <button 
                 onClick={() => setCurrentSlide(totalSlides - 1)}
-                className="text-[10px] uppercase tracking-widest font-bold px-4 py-2 bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20 hover:bg-[#D4AF37]/20 rounded-full transition-colors"
+                className="text-xs font-bold px-4 py-2 bg-[#0047FF] hover:bg-[#003BCC] text-white rounded-full transition-colors"
               >
                 Ver Proposta
               </button>
@@ -217,35 +217,54 @@ export default function PresentationViewer({ proposal, services }: PresentationV
 
 // SLIDE 1
 function SlideCapa({ proposal }: { proposal: Proposal }) {
-  const getLogoUrl = (url: string | null) => {
-    if (!url) return null
-    if (url.startsWith('http') || url.startsWith('/')) return url
-    return `/${url}`
-  }
-
   return (
     <div className="flex flex-col items-center text-center">
-      <div className="inline-flex items-center gap-2 bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-[#D4AF37] text-[10px] font-bold px-4 py-2 rounded-full tracking-widest uppercase mb-12 shadow-[0_0_20px_rgba(212,175,55,0.15)]">
-        Apresentação Estratégica
-      </div>
+      <Image
+        src="/logo-pinguim.png"
+        alt="Pinguim Marketing"
+        width={280}
+        height={78}
+        className="object-contain brightness-0 invert mb-12"
+      />
 
-      <h1 className="text-6xl md:text-8xl font-black mb-8 leading-[0.95] tracking-tight">
-        <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/40">
-          Marketing sem dados<br/>é apenas opinião.
+      <h1 className="text-5xl md:text-7xl font-black mb-5 leading-[1.05] tracking-tight">
+        <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/50">
+          Marketing sem dados<br/>é opinião.
         </span>
       </h1>
-      
-      <div className="w-24 h-1 bg-[#D4AF37] mb-12 rounded-full" />
+      <p className="text-white font-bold text-base md:text-lg mb-3 inline-block relative">
+        <span
+          className="relative inline-block px-1"
+          style={{
+            backgroundImage: 'linear-gradient(90deg, #0047FF 0%, #5B8FFF 100%)',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: '0% 2px',
+            backgroundPosition: '0 100%',
+            animation: 'highlight-sweep 0.8s ease-out 0.6s forwards',
+          }}
+        >
+          Crescimento vem de estrat&eacute;gia.
+        </span>
+        <style>{`
+          @keyframes highlight-sweep {
+            to { background-size: 100% 2px; }
+          }
+        `}</style>
+      </p>
 
-      <div className="flex flex-col md:flex-row items-center gap-6 bg-white/[0.03] border border-white/10 px-8 py-6 rounded-[2rem] backdrop-blur-xl shadow-2xl">
+      <p className="text-slate-400 text-base md:text-lg mb-10 max-w-xl leading-relaxed">
+        Uma estrutura pensada para integrar salão, delivery e canais digitais em uma operação mais previsível e lucrativa.
+      </p>
+
+      <div className="flex items-center gap-4 bg-white/[0.04] border border-white/10 px-6 py-4 rounded-2xl backdrop-blur-md shadow-2xl">
         {proposal.logo_url && (
-          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center overflow-hidden shrink-0 shadow-xl shadow-black/20">
-            <img src={getLogoUrl(proposal.logo_url) || ''} alt={proposal.restaurant_name} className="w-full h-full object-contain p-2" />
+          <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center overflow-hidden shrink-0">
+            <img src={proposal.logo_url} alt={proposal.restaurant_name} className="w-full h-full object-contain p-1" />
           </div>
         )}
-        <div className="text-center md:text-left">
-          <p className="text-slate-500 text-[10px] uppercase tracking-[0.3em] mb-1 font-bold">Exclusivo para</p>
-          <p className="text-white font-black text-2xl md:text-3xl">{proposal.restaurant_name}</p>
+        <div className="text-left">
+          <p className="text-slate-500 text-[10px] uppercase tracking-widest mb-0.5">Apresentação exclusiva para</p>
+          <p className="text-white font-bold text-lg md:text-xl">{proposal.restaurant_name}</p>
         </div>
       </div>
     </div>
@@ -262,47 +281,44 @@ function SlideAutoridade() {
 
   return (
     <div className="flex flex-col items-center w-full">
-      <p className="text-[#D4AF37] text-xs uppercase tracking-[0.3em] font-bold mb-4 text-center">Sobre a Pinguim</p>
-      <h2 className="text-4xl md:text-6xl font-black mb-12 text-center leading-[1.1]">
+      <p className="text-slate-500 text-xs uppercase tracking-[0.2em] font-semibold mb-4 text-center">Sobre a Pinguim</p>
+      <h2 className="text-3xl md:text-5xl font-black mb-8 text-center leading-tight">
         Sua operação merece um<br/>
-        <span className="text-white">marketing de alto nível.</span>
+        <span className="text-[#0047FF]">marketing de alto nível.</span>
       </h2>
 
-      <div className="grid md:grid-cols-2 gap-12 items-center w-full max-w-5xl">
-        <div className="space-y-8">
-          <p className="text-slate-400 text-lg leading-relaxed">
+      <div className="grid md:grid-cols-2 gap-10 items-center w-full max-w-4xl">
+        <div className="space-y-6">
+          <p className="text-slate-400 text-base md:text-lg leading-relaxed">
             A Pinguim não é apenas uma agência. Somos o seu **braço direito estratégico**. 
             Entendemos as dores de quem opera no "fogo cruzado" entre salão e delivery.
           </p>
-          <div className="space-y-6">
+          <div className="space-y-4">
             {stats.map((stat, i) => (
-              <div key={i} className="flex items-center gap-5 group">
-                <div className="w-12 h-12 bg-[#D4AF37]/10 border border-[#D4AF37]/20 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-[#D4AF37]/20 transition-all text-[#D4AF37] group-hover:scale-110">
+              <div key={i} className="flex items-center gap-4 group">
+                <div className="w-10 h-10 bg-[#0047FF]/10 border border-[#0047FF]/20 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-[#0047FF]/20 transition-colors text-[#0047FF]">
                   {stat.icon}
                 </div>
                 <div>
-                  <p className="text-white font-bold text-base">{stat.label}</p>
-                  <p className="text-slate-500 text-sm">{stat.value}</p>
+                  <p className="text-white font-bold text-sm">{stat.label}</p>
+                  <p className="text-slate-500 text-xs">{stat.value}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="relative group">
-          <div className="absolute inset-0 bg-[#D4AF37] blur-[120px] opacity-10 group-hover:opacity-20 transition-opacity" />
-          <div className="relative bg-[#0F1014] border border-white/10 rounded-[3rem] p-1 overflow-hidden shadow-2xl transition-all duration-700">
-             <div className="bg-gradient-to-br from-white/[0.05] to-transparent p-10 rounded-[2.9rem]">
-                <div className="w-16 h-16 bg-[#D4AF37] rounded-2xl flex items-center justify-center mb-8 shadow-xl shadow-[#D4AF37]/20">
-                  <Zap size={32} className="text-black" />
+        <div className="relative">
+          <div className="absolute inset-0 bg-[#0047FF] blur-[100px] opacity-20" />
+          <div className="relative bg-[#0F1014] border border-white/10 rounded-[2.5rem] p-1 overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
+             <div className="bg-gradient-to-br from-white/[0.05] to-transparent p-8 rounded-[2.4rem]">
+                <div className="w-16 h-16 bg-[#0047FF] rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-[#0047FF]/20">
+                  <Image src="/logo-pinguim.png" alt="Pinguim" width={40} height={12} className="object-contain brightness-0 invert" />
                 </div>
-                <p className="text-white text-2xl font-black leading-tight mb-6 italic">
-                  "Nascemos para tirar o dono do operacional e colocá-lo no controle do crescimento."
+                <p className="text-white text-xl font-black leading-tight mb-4 italic">
+                  "Nascemos para tirar o dono do restaurante do operacional e colocá-lo no controle do crescimento."
                 </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-px bg-[#D4AF37]" />
-                  <p className="text-[#D4AF37] text-xs font-bold uppercase tracking-widest">Time Pinguim</p>
-                </div>
+                <p className="text-[#0047FF] text-sm font-bold uppercase tracking-wider">— Time Pinguim</p>
              </div>
           </div>
         </div>
@@ -311,7 +327,7 @@ function SlideAutoridade() {
   )
 }
 
-// SLIDE 3: Parceiros (NOVO)
+// SLIDE 3: Parceiros
 function SlideParceiros() {
   const partners = [
     { src: "/Santa Feijuca.png", alt: "Santa Feijuca" },
@@ -327,61 +343,47 @@ function SlideParceiros() {
 
   return (
     <div className="flex flex-col items-center w-full">
-      <p className="text-[#D4AF37] text-xs uppercase tracking-[0.3em] font-bold mb-4">Portfólio</p>
-      <h2 className="text-4xl md:text-6xl font-black mb-12 text-center leading-tight">
-        Quem já confia na nossa<br/><span className="text-white">estratégia de escala.</span>
+      <p className="text-slate-500 text-xs uppercase tracking-[0.2em] font-semibold mb-4 text-center">Nossos Parceiros</p>
+      <h2 className="text-3xl md:text-5xl font-black mb-8 text-center leading-tight">
+        Quem já confia na nossa<br/><span className="text-[#0047FF]">estratégia de escala.</span>
       </h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 w-full max-w-5xl">
-        {partners.slice(0, 10).map((partner, i) => (
-          <div key={i} className="aspect-square bg-white/[0.03] border border-white/5 rounded-3xl p-6 flex items-center justify-center group hover:bg-white/[0.08] hover:border-[#D4AF37]/30 transition-all duration-500">
-            <img src={partner.src} alt={partner.alt} className="max-w-full max-h-full object-contain filter brightness-0 invert opacity-40 group-hover:opacity-100 transition-all duration-500 scale-90 group-hover:scale-105" />
+      <div className="grid grid-cols-3 md:grid-cols-5 gap-4 w-full max-w-5xl">
+        {partners.map((partner, i) => (
+          <div key={i} className="aspect-square bg-white/[0.03] border border-white/5 rounded-2xl p-4 flex items-center justify-center group hover:bg-[#0047FF]/5 hover:border-[#0047FF]/30 transition-all duration-300">
+            <img src={partner.src} alt={partner.alt} className="max-w-full max-h-full object-contain filter brightness-0 invert opacity-40 group-hover:opacity-100 transition-opacity" />
           </div>
         ))}
-        <div className="aspect-square bg-[#D4AF37]/10 border border-[#D4AF37]/20 rounded-3xl p-6 flex flex-col items-center justify-center text-center group">
-          <p className="text-[#D4AF37] font-black text-2xl mb-1">+200</p>
-          <p className="text-[#D4AF37] text-[10px] font-bold uppercase tracking-widest">Restaurantes Atendidos</p>
-        </div>
       </div>
     </div>
   )
 }
 
-// SLIDE 4: Visao (NOVO)
+// SLIDE 4: Visao
 function SlideVisao() {
   return (
     <div className="flex flex-col items-center w-full">
-      <p className="text-[#D4AF37] text-xs uppercase tracking-[0.3em] font-bold mb-4">Visão Estratégica</p>
-      <h2 className="text-4xl md:text-6xl font-black mb-16 text-center leading-tight">
-        O ecossistema perfeito de<br/><span className="text-white">vendas recorrentes.</span>
+      <p className="text-slate-500 text-xs uppercase tracking-[0.2em] font-semibold mb-4 text-center">Visão Estratégica</p>
+      <h2 className="text-3xl md:text-5xl font-black mb-12 text-center leading-tight">
+        O ecossistema perfeito de<br/><span className="text-[#0047FF]">vendas recorrentes.</span>
       </h2>
 
-      <div className="relative w-full max-w-4xl h-[400px] flex items-center justify-center">
-        {/* Core circle */}
-        <div className="absolute w-48 h-48 bg-[#D4AF37] rounded-full flex flex-col items-center justify-center text-black shadow-[0_0_60px_rgba(212,175,55,0.4)] z-20">
-          <p className="font-black text-xl leading-tight">MÉTODO</p>
-          <p className="font-black text-xl leading-tight">PINGUIM</p>
+      <div className="relative w-full max-w-3xl h-[300px] flex items-center justify-center">
+        <div className="absolute w-40 h-40 bg-[#0047FF] rounded-full flex flex-col items-center justify-center text-white shadow-[0_0_50px_rgba(0,71,255,0.3)] z-20">
+          <p className="font-black text-sm leading-tight">MÉTODO</p>
+          <p className="font-black text-sm leading-tight">PINGUIM</p>
         </div>
 
-        {/* Orbit items */}
         {[
           { label: 'GOOGLE MEU NEGÓCIO', pos: 'top-0' },
           { label: 'TRÁFEGO PAGO (META)', pos: 'bottom-0' },
           { label: 'ENGENHARIA DE CARDÁPIO', pos: 'left-0' },
           { label: 'GESTÃO DE DELIVERY', pos: 'right-0' }
         ].map((item, i) => (
-          <div key={i} className={`absolute ${item.pos === 'top-0' ? '-top-4' : item.pos === 'bottom-0' ? '-bottom-4' : ''} ${item.pos === 'left-0' ? '-left-4' : item.pos === 'right-0' ? '-right-4' : ''} bg-white/[0.05] border border-white/10 px-8 py-4 rounded-2xl backdrop-blur-xl z-10 hover:border-[#D4AF37]/50 transition-colors`}>
-            <p className="text-white font-bold text-xs tracking-widest">{item.label}</p>
+          <div key={i} className={`absolute ${item.pos === 'top-0' ? '-top-4' : item.pos === 'bottom-0' ? '-bottom-4' : ''} ${item.pos === 'left-0' ? '-left-4' : item.pos === 'right-0' ? '-right-4' : ''} bg-white/[0.05] border border-white/10 px-6 py-3 rounded-xl backdrop-blur-md z-10`}>
+            <p className="text-white font-bold text-[10px] tracking-widest">{item.label}</p>
           </div>
         ))}
-
-        {/* Connecting lines (SVG) */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20">
-          <line x1="50%" y1="50%" x2="50%" y2="0%" stroke="white" strokeWidth="1" strokeDasharray="5,5" />
-          <line x1="50%" y1="50%" x2="50%" y2="100%" stroke="white" strokeWidth="1" strokeDasharray="5,5" />
-          <line x1="50%" y1="50%" x2="0%" y2="50%" stroke="white" strokeWidth="1" strokeDasharray="5,5" />
-          <line x1="50%" y1="50%" x2="100%" y2="50%" stroke="white" strokeWidth="1" strokeDasharray="5,5" />
-        </svg>
       </div>
     </div>
   )
@@ -391,24 +393,24 @@ function SlideVisao() {
 function SlideProblema() {
   return (
     <div className="flex flex-col items-center w-full">
-      <p className="text-[#D4AF37] text-xs uppercase tracking-[0.3em] font-bold mb-4">O Diagnóstico</p>
-      <h2 className="text-4xl md:text-6xl font-black mb-6 text-center leading-tight">
-        O que trava o seu<br/><span className="text-white">crescimento hoje?</span>
+      <p className="text-slate-500 text-xs uppercase tracking-[0.2em] font-semibold mb-4 text-center">O Diagnóstico</p>
+      <h2 className="text-3xl md:text-5xl font-black mb-4 text-center leading-tight">
+        O que está travando o crescimento do seu delivery?
       </h2>
-      <p className="text-slate-400 text-lg mb-12 text-center max-w-2xl">A maioria dos restaurantes enfrenta os mesmos 3 bloqueios fundamentais.</p>
+      <p className="text-slate-400 text-base mb-12 text-center max-w-xl">A maioria dos restaurantes enfrenta os mesmos 3 bloqueios fundamentais.</p>
 
-      <div className="grid md:grid-cols-3 gap-6 w-full max-w-5xl">
+      <div className="grid md:grid-cols-3 gap-5 w-full">
         {[
-          { icon: <Target size={28} />, title: 'Refém dos Apps', desc: 'Depender do iFood para existir é ceder o controle da sua operação para um algoritmo.' },
-          { icon: <Search size={28} />, title: 'Invisível no Google', desc: 'Clientes buscam e não te encontram. Isso é dinheiro que vai direto para o seu vizinho.' },
-          { icon: <UtensilsCrossed size={28} />, title: 'Sem Estratégia', desc: 'Um cardápio sem engenharia é apenas uma lista de preços. Não gera desejo nem lucro.' }
+          { icon: <Target size={24} />, color: 'red', title: 'Refém dos Apps', desc: 'Depender do iFood para existir é ceder o controle das suas vendas para um algoritmo.' },
+          { icon: <Search size={24} />, color: 'yellow', title: 'Invisível no Google', desc: 'Clientes buscam e não te encontram. Isso é dinheiro que vai direto para o vizinho.' },
+          { icon: <UtensilsCrossed size={24} />, color: 'blue', title: 'Cardápio sem Estratégia', desc: 'Um cardápio sem engenharia é apenas uma lista de preços. Não gera desejo nem lucro.' }
         ].map((item, i) => (
-          <div key={i} className="group bg-white/[0.02] border border-white/5 p-10 rounded-[2.5rem] hover:border-[#D4AF37]/30 hover:bg-[#D4AF37]/5 transition-all duration-500">
-            <div className="w-14 h-14 bg-[#D4AF37]/10 rounded-2xl flex items-center justify-center mb-8 text-[#D4AF37] group-hover:scale-110 transition-transform">
+          <div key={i} className="group bg-[#0F1014]/80 backdrop-blur-sm border border-white/10 p-7 rounded-3xl hover:border-[#0047FF]/30 hover:bg-[#0047FF]/5 transition-all duration-300">
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-5 ${item.color === 'red' ? 'bg-red-500/10 text-red-400' : item.color === 'yellow' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-[#0047FF]/10 text-[#0047FF]'}`}>
               {item.icon}
             </div>
-            <h3 className="text-xl font-bold mb-4 text-white">{item.title}</h3>
-            <p className="text-slate-500 text-sm leading-relaxed">{item.desc}</p>
+            <h3 className="text-lg font-bold mb-2">{item.title}</h3>
+            <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
           </div>
         ))}
       </div>
@@ -425,38 +427,44 @@ function SlideMetodo() {
     { title: 'Decisões com Dados', desc: 'Relatórios que mostram o que funciona e onde investir mais.' },
   ]
   return (
-    <div className="flex flex-col md:flex-row items-center gap-16 w-full max-w-5xl">
+    <div className="flex flex-col md:flex-row items-center gap-10 w-full">
       <div className="flex-1">
-        <p className="text-[#D4AF37] text-xs uppercase tracking-[0.3em] font-bold mb-4">A Solução</p>
-        <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight">
+        <p className="text-slate-500 text-xs uppercase tracking-[0.2em] font-semibold mb-4 text-center">Nossa Abordagem</p>
+        <h2 className="text-3xl md:text-5xl font-black mb-5 leading-tight">
           Não fazemos posts.<br/>
-          <span className="text-white">Construímos máquinas.</span>
+          <span className="text-[#0047FF]">Construímos máquinas de venda.</span>
         </h2>
-        <p className="text-slate-400 text-lg leading-relaxed mb-10">
-          O Método Pinguim une tráfego, presença local e inteligência de dados em um ecossistema único de vendas.
+        <p className="text-slate-400 text-base leading-relaxed mb-8">
+          O Método Pinguim une tráfego pago, presença local e engenharia de cardápio num único ecossistema. Resultado: previsibilidade de clientes, todos os dias.
         </p>
-        <div className="space-y-6">
+        <div className="space-y-4">
           {items.map((item, idx) => (
-            <div key={idx} className="flex items-start gap-5 group">
-              <div className="w-10 h-10 bg-[#D4AF37]/10 border border-[#D4AF37]/20 rounded-2xl flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[#D4AF37]/20 transition-all">
-                <CheckCircle2 size={18} className="text-[#D4AF37]" />
+            <div key={idx} className="flex items-start gap-4 group">
+              <div className="w-8 h-8 bg-[#0047FF]/10 border border-[#0047FF]/20 rounded-xl flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[#0047FF]/20 transition-colors">
+                <CheckCircle2 size={15} className="text-[#0047FF]" />
               </div>
               <div>
-                <p className="text-white font-bold text-base">{item.title}</p>
-                <p className="text-slate-500 text-sm mt-1">{item.desc}</p>
+                <p className="text-white font-semibold text-sm">{item.title}</p>
+                <p className="text-slate-500 text-xs mt-0.5">{item.desc}</p>
               </div>
             </div>
           ))}
         </div>
       </div>
-      <div className="flex-1 w-full max-w-sm">
-        <div className="bg-[#D4AF37] rounded-[3rem] p-12 relative overflow-hidden shadow-[0_0_80px_rgba(212,175,55,0.2)]">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-black/10 rounded-full -mr-16 -mt-16" />
-          <Zap size={64} className="text-black mb-8" />
-          <h3 className="text-3xl font-black text-black mb-4 leading-tight">Resultados<br/>Reais.</h3>
-          <p className="text-black/70 font-bold text-sm leading-relaxed">
-            Nossa meta é uma só: aumentar o seu lucro e dar previsibilidade para o seu negócio.
+      <div className="flex-1 w-full max-w-xs mt-8 md:mt-0">
+        <div className="bg-gradient-to-br from-[#0047FF]/10 to-[#0F1014] border border-[#0047FF]/20 rounded-3xl p-8 relative overflow-hidden shadow-2xl">
+          <div className="absolute -top-12 -right-12 w-48 h-48 bg-[#0047FF] blur-[90px] opacity-30 pointer-events-none" />
+          <div className="w-16 h-16 bg-[#0047FF]/15 rounded-2xl flex items-center justify-center mb-6 border border-[#0047FF]/30">
+            <Zap size={32} className="text-[#0047FF]" />
+          </div>
+          <h3 className="text-2xl font-bold mb-3">Método Pinguim</h3>
+          <p className="text-slate-400 text-sm leading-relaxed">
+            Uma metodologia focada em resultado real: mais pedidos, mais clientes recorrentes e mais controle sobre o seu negócio.
           </p>
+          <div className="mt-6 pt-5 border-t border-white/10">
+            <p className="text-[#0047FF] text-xs font-bold uppercase tracking-wider">Você cuida da operação.</p>
+            <p className="text-white text-xs font-semibold mt-1">A gente cuida de trazer os clientes.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -466,88 +474,89 @@ function SlideMetodo() {
 // SLIDE 7: Proposta
 function SlideProposta({ proposal, services, whatsapp }: { proposal: Proposal, services: PresentationViewerProps['services'], whatsapp: string }) {
   return (
-    <div className="flex flex-col items-center w-full pb-12">
-      <div className="text-center mb-12">
-        <p className="text-[#D4AF37] text-xs uppercase tracking-[0.3em] font-bold mb-3">Investimento</p>
-        <h2 className="text-4xl md:text-5xl font-black mb-4 text-white">Plano de Escala</h2>
-        <p className="text-slate-500 text-lg">Tudo pronto para você dominar sua região.</p>
+    <div className="flex flex-col items-center w-full pb-8">
+      <div className="text-center mb-8">
+        <p className="text-slate-500 text-xs uppercase tracking-[0.2em] font-semibold mb-3">A Proposta</p>
+        <h2 className="text-3xl md:text-4xl font-black mb-2">O que está incluído</h2>
+        <p className="text-slate-400 text-sm">Tudo pronto para você dominar sua região e vender mais, todo dia.</p>
       </div>
 
-      <div className="bg-[#0F1014]/90 backdrop-blur-2xl border border-[#D4AF37]/20 rounded-[3rem] p-10 md:p-14 shadow-[0_0_100px_rgba(0,0,0,0.5)] relative overflow-hidden w-full max-w-4xl">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-[#D4AF37]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="bg-[#0F1014]/90 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-10 shadow-2xl relative overflow-hidden w-full max-w-3xl">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[#0047FF]/10 blur-[80px] rounded-full pointer-events-none" />
 
         {/* Header Proposta */}
-        <div className="flex flex-col md:flex-row items-center justify-between pb-10 border-b border-white/5 mb-10 relative z-10 gap-8">
-          <div className="text-center md:text-left">
-            <h3 className="text-4xl font-black text-white mb-2 tracking-tight">{proposal.restaurant_name}</h3>
-            <div className="flex items-center justify-center md:justify-start gap-2">
-              <span className="w-2 h-2 bg-[#D4AF37] rounded-full" />
-              <p className="text-slate-500 font-bold text-xs uppercase tracking-widest">{services.length} Entregas Estratégicas</p>
-            </div>
+        <div className="flex items-center justify-between pb-6 border-b border-white/10 mb-6 relative z-10">
+          <div>
+            <h3 className="text-2xl font-bold text-white mb-1">{proposal.restaurant_name}</h3>
+            <p className="text-slate-400 text-sm">{services.length} serviços inclusos neste plano</p>
           </div>
           {proposal.logo_url && (
-            <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center overflow-hidden shadow-2xl shrink-0 border-4 border-white/10">
-              <img src={proposal.logo_url} alt="Logo" className="w-full h-full object-contain p-2" />
+            <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center overflow-hidden shadow-lg shrink-0">
+              <img src={proposal.logo_url} alt="Logo" className="w-full h-full object-contain p-1" />
             </div>
           )}
         </div>
 
         {/* Listagem de Serviços */}
-        <div className="grid md:grid-cols-2 gap-x-12 gap-y-4 mb-12 relative z-10">
+        <div className="space-y-3 mb-8 relative z-10 max-h-[30vh] overflow-y-auto no-scrollbar pr-2">
           {services.map((s, i) => (
-            <div key={i} className="flex items-center gap-4">
-              <div className="w-6 h-6 bg-[#D4AF37]/10 rounded-full flex items-center justify-center shrink-0">
-                <CheckCircle2 size={14} className="text-[#D4AF37]" />
+            <div key={i} className="flex items-center gap-3">
+              <div className="w-6 h-6 bg-white/5 rounded-full flex items-center justify-center shrink-0">
+                <CheckCircle2 size={14} className="text-[#0047FF]" />
               </div>
-              <span className="text-slate-300 font-medium text-sm md:text-base">{s.name}</span>
+              <span className="text-slate-200 font-medium text-sm md:text-base">{s.name}</span>
             </div>
           ))}
         </div>
 
         {/* Valores */}
-        <div className="space-y-6 relative z-10">
-          <div className="bg-gradient-to-r from-[#D4AF37]/10 via-[#D4AF37]/5 to-transparent border border-[#D4AF37]/20 rounded-[2rem] p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 backdrop-blur-md">
+        <div className="space-y-4 relative z-10">
+          <div className="bg-gradient-to-r from-[#0047FF]/20 to-transparent border border-[#0047FF]/30 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 backdrop-blur-sm shadow-[0_0_30px_rgba(0,71,255,0.1)]">
             <div>
-              <p className="text-white font-black text-xl mb-1 uppercase tracking-tight">Honorários Mensais</p>
-              <p className="text-slate-500 text-sm font-medium">Gestão e Estratégia completa Pinguim</p>
+              <p className="text-white font-bold text-base">Honorários mensais</p>
+              <p className="text-slate-400 text-xs mt-1">Gestão, estratégia e execução Pinguim</p>
             </div>
             <div className="text-left sm:text-right">
-              <span className="text-white font-black text-5xl md:text-6xl tracking-tighter">{fmt(proposal.service_value)}</span>
-              <p className="text-[#D4AF37] text-[10px] font-black uppercase tracking-[0.3em] mt-2">por mês</p>
+              <span className="text-[#0047FF] font-black text-3xl md:text-4xl">{fmt(proposal.service_value)}</span>
+              <p className="text-[#0047FF]/60 text-[10px] font-bold uppercase tracking-wider mt-1">por mês</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-            <div className="bg-white/[0.02] border border-white/5 rounded-[2rem] p-6 text-center">
-              <p className="text-slate-500 text-[10px] mb-2 uppercase tracking-[0.2em] font-bold">Prazo</p>
-              <p className="text-white font-black text-2xl">{proposal.contract_duration} meses</p>
-            </div>
-            {proposal.ad_value > 0 && (
-              <div className="bg-white/[0.02] border border-white/5 rounded-[2rem] p-6 text-center">
-                <p className="text-slate-500 text-[10px] mb-2 uppercase tracking-[0.2em] font-bold">Verba ADS</p>
-                <p className="text-white font-black text-2xl">{fmt(proposal.ad_value)}</p>
+          {proposal.ad_value > 0 && (
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <p className="text-white font-semibold text-sm">Verba de Anúncios recomendada</p>
+                <p className="text-slate-400 text-xs mt-1">Para investir diretamente nas plataformas (Google/Meta)</p>
               </div>
-            )}
+              <span className="text-white font-bold text-xl">{fmt(proposal.ad_value)}</span>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
+              <p className="text-slate-400 text-[10px] mb-1 uppercase tracking-widest">Prazo</p>
+              <p className="text-white font-bold text-lg">{proposal.contract_duration} meses</p>
+            </div>
             {proposal.units && proposal.units > 1 && (
-              <div className="bg-white/[0.02] border border-white/5 rounded-[2rem] p-6 text-center">
-                <p className="text-slate-500 text-[10px] mb-2 uppercase tracking-[0.2em] font-bold">Unidades</p>
-                <p className="text-white font-black text-2xl">{proposal.units}</p>
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
+                <p className="text-slate-400 text-[10px] mb-1 uppercase tracking-widest">Lojas</p>
+                <p className="text-white font-bold text-lg">{proposal.units} unidades</p>
               </div>
             )}
           </div>
         </div>
+        
       </div>
 
-      <div className="mt-16 text-center z-20">
+      <div className="mt-8 text-center z-20">
         <a
           href={whatsapp}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-4 bg-white text-black font-black px-12 py-6 rounded-full text-xl transition-all shadow-[0_0_50px_rgba(255,255,255,0.2)] hover:shadow-[0_0_70px_rgba(255,255,255,0.4)] hover:-translate-y-2 group"
+          className="inline-flex items-center gap-3 bg-[#0047FF] hover:bg-[#003BCC] text-white font-bold px-8 py-4 rounded-full text-base transition-all shadow-[0_0_30px_rgba(0,71,255,0.4)] hover:shadow-[0_0_50px_rgba(0,71,255,0.6)] hover:-translate-y-1"
         >
-          FECHAR NEGÓCIO <TrendingUp size={24} className="group-hover:translate-x-1 transition-transform" />
+          Aprovar Proposta <TrendingUp size={20} />
         </a>
-        <p className="text-slate-500 text-xs mt-6 uppercase tracking-[0.4em] font-bold">Fale agora com um especialista</p>
       </div>
     </div>
   )
