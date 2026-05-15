@@ -1,0 +1,510 @@
+"use client"
+
+import { useState, useEffect, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { CheckCircle2, ChevronRight, Search, Target, UtensilsCrossed, Zap, TrendingUp, Users, Award, ShieldCheck } from 'lucide-react'
+import Image from 'next/image'
+
+interface Proposal {
+  slug: string;
+  restaurant_name: string;
+  logo_url: string | null;
+  service_value: number;
+  ad_value: number;
+  contract_duration: number;
+  units?: number;
+  services?: { id: string; name: string; price: number }[];
+}
+
+interface PresentationViewerProps {
+  proposal: Proposal;
+  services: { id: string; name: string; price: number }[];
+}
+
+const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
+
+export default function PresentationViewer({ proposal, services }: PresentationViewerProps) {
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [direction, setDirection] = useState(1) // 1 para baixo (next), -1 para cima (prev)
+  const [isNavVisible, setIsNavVisible] = useState(true)
+  const totalSlides = 5
+  const whatsapp = `https://wa.me/5571996623922?text=${encodeURIComponent('Olá! Acabei de ver a apresentação comercial e a proposta. Quero fechar negócio!')}`
+
+  const nextSlide = useCallback(() => {
+    if (currentSlide < totalSlides - 1) {
+      setDirection(1)
+      setCurrentSlide(prev => prev + 1)
+      setIsNavVisible(false)
+    }
+  }, [currentSlide, totalSlides])
+
+  const prevSlide = useCallback(() => {
+    if (currentSlide > 0) {
+      setDirection(-1)
+      setCurrentSlide(prev => prev - 1)
+      setIsNavVisible(true)
+    }
+  }, [currentSlide])
+
+  // Lógica para esconder a navbar após inatividade
+  useEffect(() => {
+    let timeout: NodeJS.Timeout
+    if (isNavVisible) {
+      timeout = setTimeout(() => {
+        setIsNavVisible(false)
+      }, 3000)
+    }
+    return () => clearTimeout(timeout)
+  }, [isNavVisible, currentSlide])
+
+  // Suporte a teclado
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+        nextSlide()
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        prevSlide()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [nextSlide, prevSlide])
+
+  // Suporte a wheel (mouse/trackpad)
+  useEffect(() => {
+    let wheelTimeout: NodeJS.Timeout | null = null
+    const handleWheel = (e: WheelEvent) => {
+      if (wheelTimeout) return
+      
+      setIsNavVisible(true)
+
+      // Suporta scroll horizontal (trackpad) e vertical (mouse)
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY
+      
+      if (delta > 50) {
+        nextSlide()
+        wheelTimeout = setTimeout(() => wheelTimeout = null, 800)
+      } else if (delta < -50) {
+        prevSlide()
+        wheelTimeout = setTimeout(() => wheelTimeout = null, 800)
+      }
+    }
+    
+    window.addEventListener('wheel', handleWheel)
+    return () => window.removeEventListener('wheel', handleWheel)
+  }, [nextSlide, prevSlide])
+
+  const variants = {
+    enter: (dir: number) => ({
+      x: dir > 0 ? 1200 : -1200,
+      opacity: 0,
+      scale: 0.95
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.5 }
+    },
+    exit: (dir: number) => ({
+      zIndex: 0,
+      x: dir < 0 ? 1200 : -1200,
+      opacity: 0,
+      scale: 0.95,
+      transition: { duration: 0.5 }
+    })
+  }
+
+  // Handle Drag para Touch Devices
+  const handleDragEnd = (e: any, { offset }: any) => {
+    const swipeThreshold = 50;
+    if (offset.x < -swipeThreshold) {
+      nextSlide()
+    } else if (offset.x > swipeThreshold) {
+      prevSlide()
+    }
+    setIsNavVisible(true)
+  }
+
+  return (
+    <div 
+      className="h-screen w-full bg-[#0D0D12] text-white overflow-hidden relative font-sans"
+      onMouseMove={() => setIsNavVisible(true)}
+      onTouchStart={() => setIsNavVisible(true)}
+    >
+      {/* Background Glow Fixos */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-[#0047FF]/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[300px] bg-[#0047FF]/8 rounded-full blur-[100px]" />
+      </div>
+
+      {/* Navbar Glassmorphism - Auto hiding */}
+      <AnimatePresence>
+        {isNavVisible && (
+          <motion.nav
+            initial={{ y: -100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -100, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-white/5 backdrop-blur-md border-b border-white/10"
+          >
+            <Image src="/logo-pinguim.png" alt="Pinguim" width={100} height={30} className="object-contain brightness-0 invert" />
+            
+            <div className="flex items-center gap-4">
+              <div className="hidden sm:flex gap-1 text-xs font-medium text-slate-400">
+                {Array.from({ length: totalSlides }).map((_, i) => (
+                  <div key={i} className={`h-1.5 w-8 rounded-full transition-colors ${currentSlide === i ? 'bg-[#0047FF]' : 'bg-white/20'}`} />
+                ))}
+              </div>
+              <button 
+                onClick={() => setCurrentSlide(totalSlides - 1)}
+                className="text-xs font-bold px-4 py-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+              >
+                Ver Proposta
+              </button>
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
+
+      {/* Main Slide Area */}
+      <div className="relative w-full h-full z-10 flex items-center justify-center">
+        <AnimatePresence initial={false} custom={direction} mode="wait">
+          <motion.div
+            key={currentSlide}
+            custom={direction}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.15}
+            onDragEnd={handleDragEnd}
+            className="absolute inset-0 w-full h-full flex flex-col items-center justify-center p-6 cursor-grab active:cursor-grabbing overflow-y-auto overflow-x-hidden no-scrollbar"
+            style={{ touchAction: "pan-y" }}
+          >
+            {/* O conteúdo do slide previne a propagação do evento touch se tiver scroll interno longo,
+                mas para essa apresentação "single-page" vamos deixar centralizado e responsivo. */}
+            <div className="w-full max-w-5xl my-auto">
+              {currentSlide === 0 && <SlideCapa proposal={proposal} />}
+              {currentSlide === 1 && <SlideAutoridade />}
+              {currentSlide === 2 && <SlideProblema />}
+              {currentSlide === 3 && <SlideMetodo />}
+              {currentSlide === 4 && <SlideProposta proposal={proposal} services={services} whatsapp={whatsapp} />}
+            </div>
+
+            {/* Hint de navegação */}
+            {currentSlide < totalSlides - 1 && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1 }}
+                className="absolute bottom-10 right-8 flex items-center text-slate-500 animate-bounce pointer-events-none"
+              >
+                <span className="text-[10px] font-medium mr-1 uppercase tracking-widest">Deslize</span>
+                <ChevronRight size={20} />
+              </motion.div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </div>
+  )
+}
+
+// SLIDE 1
+function SlideCapa({ proposal }: { proposal: Proposal }) {
+  return (
+    <div className="flex flex-col items-center text-center">
+      <Image
+        src="/logo-pinguim.png"
+        alt="Pinguim Marketing"
+        width={280}
+        height={78}
+        className="object-contain brightness-0 invert mb-12"
+      />
+
+      <h1 className="text-5xl md:text-7xl font-black mb-5 leading-[1.05] tracking-tight">
+        <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/50">
+          Marketing sem dados<br/>é opinião.
+        </span>
+      </h1>
+      <p className="text-white font-bold text-base md:text-lg mb-3 inline-block relative">
+        <span
+          className="relative inline-block px-1"
+          style={{
+            backgroundImage: 'linear-gradient(90deg, #0047FF 0%, #5B8FFF 100%)',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: '0% 2px',
+            backgroundPosition: '0 100%',
+            animation: 'highlight-sweep 0.8s ease-out 0.6s forwards',
+          }}
+        >
+          Crescimento vem de estrat&eacute;gia.
+        </span>
+        <style>{`
+          @keyframes highlight-sweep {
+            to { background-size: 100% 2px; }
+          }
+        `}</style>
+      </p>
+
+      <p className="text-slate-400 text-base md:text-lg mb-10 max-w-xl leading-relaxed">
+        Uma estrutura pensada para integrar salão, delivery e canais digitais em uma operação mais previsível e lucrativa.
+      </p>
+
+      <div className="flex items-center gap-4 bg-white/[0.04] border border-white/10 px-6 py-4 rounded-2xl backdrop-blur-md shadow-2xl">
+        {proposal.logo_url && (
+          <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center overflow-hidden shrink-0">
+            <img src={proposal.logo_url} alt={proposal.restaurant_name} className="w-full h-full object-contain p-1" />
+          </div>
+        )}
+        <div className="text-left">
+          <p className="text-slate-500 text-[10px] uppercase tracking-widest mb-0.5">Apresentação exclusiva para</p>
+          <p className="text-white font-bold text-lg md:text-xl">{proposal.restaurant_name}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// SLIDE 2: Autoridade
+function SlideAutoridade() {
+  const stats = [
+    { icon: <Users size={20} />, label: 'Especialistas', value: 'Time focado 100% em Food Service' },
+    { icon: <ShieldCheck size={20} />, label: 'Metodologia', value: 'Processos validados em +200 restaurantes' },
+    { icon: <Award size={20} />, label: 'Resultado', value: 'Foco total em ROI e escala de vendas' },
+  ]
+
+  return (
+    <div className="flex flex-col items-center w-full">
+      <p className="text-slate-500 text-xs uppercase tracking-[0.2em] font-semibold mb-4 text-center">Sobre a Pinguim</p>
+      <h2 className="text-3xl md:text-5xl font-black mb-8 text-center leading-tight">
+        Sua operação merece um<br/>
+        <span className="text-[#0047FF]">marketing de alto nível.</span>
+      </h2>
+
+      <div className="grid md:grid-cols-2 gap-10 items-center w-full max-w-4xl">
+        <div className="space-y-6">
+          <p className="text-slate-400 text-base md:text-lg leading-relaxed">
+            A Pinguim não é apenas uma agência. Somos o seu **braço direito estratégico**. 
+            Entendemos as dores de quem opera no "fogo cruzado" entre salão e delivery.
+          </p>
+          <div className="space-y-4">
+            {stats.map((stat, i) => (
+              <div key={i} className="flex items-center gap-4 group">
+                <div className="w-10 h-10 bg-[#0047FF]/10 border border-[#0047FF]/20 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-[#0047FF]/20 transition-colors text-[#0047FF]">
+                  {stat.icon}
+                </div>
+                <div>
+                  <p className="text-white font-bold text-sm">{stat.label}</p>
+                  <p className="text-slate-500 text-xs">{stat.value}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="relative">
+          <div className="absolute inset-0 bg-[#0047FF] blur-[100px] opacity-20" />
+          <div className="relative bg-[#0F1014] border border-white/10 rounded-[2.5rem] p-1 overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
+             <div className="bg-gradient-to-br from-white/[0.05] to-transparent p-8 rounded-[2.4rem]">
+                <div className="w-16 h-16 bg-[#0047FF] rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-[#0047FF]/20">
+                  <Image src="/logo-pinguim.png" alt="Pinguim" width={40} height={12} className="object-contain brightness-0 invert" />
+                </div>
+                <p className="text-white text-xl font-black leading-tight mb-4 italic">
+                  "Nascemos para tirar o dono do restaurante do operacional e colocá-lo no controle do crescimento."
+                </p>
+                <p className="text-[#0047FF] text-sm font-bold uppercase tracking-wider">— Time Pinguim</p>
+             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// SLIDE 3: Problema
+function SlideProblema() {
+  return (
+    <div className="flex flex-col items-center w-full">
+      <p className="text-slate-500 text-xs uppercase tracking-[0.2em] font-semibold mb-4">O Diagnóstico</p>
+      <h2 className="text-3xl md:text-5xl font-black mb-4 text-center leading-tight">
+        O que está travando o crescimento do seu delivery?
+      </h2>
+      <p className="text-slate-400 text-base mb-12 text-center max-w-xl">A maioria dos restaurantes enfrenta os mesmos 3 bloqueios — e nenhum deles é falta de produto bom.</p>
+
+      <div className="grid md:grid-cols-3 gap-5 w-full">
+        <div className="group bg-[#0F1014]/80 backdrop-blur-sm border border-white/10 p-7 rounded-3xl hover:border-red-500/30 hover:bg-red-500/5 transition-all duration-300">
+          <div className="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-red-500/20 transition-colors">
+            <Target className="text-red-400" size={24} />
+          </div>
+          <h3 className="text-lg font-bold mb-2">Refém dos Apps</h3>
+          <p className="text-slate-400 text-sm leading-relaxed">Depender do iFood ou do 99Food para existir é ceder o controle das suas vendas para um algoritmo.</p>
+        </div>
+
+        <div className="group bg-[#0F1014]/80 backdrop-blur-sm border border-white/10 p-7 rounded-3xl hover:border-yellow-500/30 hover:bg-yellow-500/5 transition-all duration-300">
+          <div className="w-12 h-12 bg-yellow-500/10 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-yellow-500/20 transition-colors">
+            <Search className="text-yellow-400" size={24} />
+          </div>
+          <h3 className="text-lg font-bold mb-2">Invisível no Google</h3>
+          <p className="text-slate-400 text-sm leading-relaxed">Clientes buscam "hambúrguer perto de mim" e encontram seus concorrentes. Isso é dinheiro indo embora.</p>
+        </div>
+
+        <div className="group bg-[#0F1014]/80 backdrop-blur-sm border border-white/10 p-7 rounded-3xl hover:border-[#0047FF]/30 hover:bg-[#0047FF]/5 transition-all duration-300">
+          <div className="w-12 h-12 bg-[#0047FF]/10 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-[#0047FF]/20 transition-colors">
+            <UtensilsCrossed className="text-[#0047FF]" size={24} />
+          </div>
+          <h3 className="text-lg font-bold mb-2">Cardápio que não vende</h3>
+          <p className="text-slate-400 text-sm leading-relaxed">Um cardápio sem estratégia é só uma lista de preços. A engenharia de cardápio muda isso completamente.</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// SLIDE 4: Metodo
+function SlideMetodo() {
+  const items = [
+    { title: 'Tráfego Pago Cirúrgico', desc: 'Anúncios que impactam quem está com fome, na sua região, agora.' },
+    { title: 'Dominância no Google', desc: 'Seu restaurante na primeira posição quando o cliente buscar.' },
+    { title: 'Engenharia de Cardápio', desc: 'Estratégia de apresentação para aumentar o ticket médio.' },
+    { title: 'Decisões com Dados', desc: 'Relatórios que mostram o que funciona e onde investir mais.' },
+  ]
+  return (
+    <div className="flex flex-col md:flex-row items-center gap-10 w-full">
+      <div className="flex-1">
+        <p className="text-slate-500 text-xs uppercase tracking-[0.2em] font-semibold mb-4">Nossa Abordagem</p>
+        <h2 className="text-3xl md:text-5xl font-black mb-5 leading-tight">
+          Não fazemos posts.<br/>
+          <span className="text-[#0047FF]">Construímos máquinas de venda.</span>
+        </h2>
+        <p className="text-slate-400 text-base leading-relaxed mb-8">
+          O Método Pinguim une tráfego pago, presença local e engenharia de cardápio num único ecossistema. Resultado: previsibilidade de clientes, todos os dias.
+        </p>
+        <div className="space-y-4">
+          {items.map((item, idx) => (
+            <div key={idx} className="flex items-start gap-4 group">
+              <div className="w-8 h-8 bg-[#0047FF]/10 border border-[#0047FF]/20 rounded-xl flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[#0047FF]/20 transition-colors">
+                <CheckCircle2 size={15} className="text-[#0047FF]" />
+              </div>
+              <div>
+                <p className="text-white font-semibold text-sm">{item.title}</p>
+                <p className="text-slate-500 text-xs mt-0.5">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="flex-1 w-full max-w-xs mt-8 md:mt-0">
+        <div className="bg-gradient-to-br from-[#0047FF]/10 to-[#0F1014] border border-[#0047FF]/20 rounded-3xl p-8 relative overflow-hidden shadow-2xl">
+          <div className="absolute -top-12 -right-12 w-48 h-48 bg-[#0047FF] blur-[90px] opacity-30 pointer-events-none" />
+          <div className="w-16 h-16 bg-[#0047FF]/15 rounded-2xl flex items-center justify-center mb-6 border border-[#0047FF]/30">
+            <Zap size={32} className="text-[#0047FF]" />
+          </div>
+          <h3 className="text-2xl font-bold mb-3">Método Pinguim</h3>
+          <p className="text-slate-400 text-sm leading-relaxed">
+            Uma metodologia focada em resultado real: mais pedidos, mais clientes recorrentes e mais controle sobre o seu negócio.
+          </p>
+          <div className="mt-6 pt-5 border-t border-white/10">
+            <p className="text-[#0047FF] text-xs font-bold uppercase tracking-wider">Você cuida da operação.</p>
+            <p className="text-white text-xs font-semibold mt-1">A gente cuida de trazer os clientes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// SLIDE 5: Proposta
+function SlideProposta({ proposal, services, whatsapp }: { proposal: Proposal, services: PresentationViewerProps['services'], whatsapp: string }) {
+  return (
+    <div className="flex flex-col items-center w-full pb-8">
+      <div className="text-center mb-8">
+        <p className="text-slate-500 text-xs uppercase tracking-[0.2em] font-semibold mb-3">A Proposta</p>
+        <h2 className="text-3xl md:text-4xl font-black mb-2">O que está incluído</h2>
+        <p className="text-slate-400 text-sm">Tudo pronto para você dominar sua região e vender mais, todo dia.</p>
+      </div>
+
+      <div className="bg-[#0F1014]/90 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-10 shadow-2xl relative overflow-hidden w-full max-w-3xl">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[#0047FF]/10 blur-[80px] rounded-full pointer-events-none" />
+
+        {/* Header Proposta */}
+        <div className="flex items-center justify-between pb-6 border-b border-white/10 mb-6 relative z-10">
+          <div>
+            <h3 className="text-2xl font-bold text-white mb-1">{proposal.restaurant_name}</h3>
+            <p className="text-slate-400 text-sm">{services.length} serviços inclusos neste plano</p>
+          </div>
+          {proposal.logo_url && (
+            <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center overflow-hidden shadow-lg shrink-0">
+              <img src={proposal.logo_url} alt="Logo" className="w-full h-full object-contain p-1" />
+            </div>
+          )}
+        </div>
+
+        {/* Listagem de Serviços */}
+        <div className="space-y-3 mb-8 relative z-10 max-h-[30vh] overflow-y-auto no-scrollbar pr-2">
+          {services.map((s, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <div className="w-6 h-6 bg-white/5 rounded-full flex items-center justify-center shrink-0">
+                <CheckCircle2 size={14} className="text-[#0047FF]" />
+              </div>
+              <span className="text-slate-200 font-medium text-sm md:text-base">{s.name}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Valores */}
+        <div className="space-y-4 relative z-10">
+          <div className="bg-gradient-to-r from-[#0047FF]/20 to-transparent border border-[#0047FF]/30 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 backdrop-blur-sm shadow-[0_0_30px_rgba(0,71,255,0.1)]">
+            <div>
+              <p className="text-white font-bold text-base">Honorários mensais</p>
+              <p className="text-slate-400 text-xs mt-1">Gestão, estratégia e execução Pinguim</p>
+            </div>
+            <div className="text-left sm:text-right">
+              <span className="text-[#0047FF] font-black text-3xl md:text-4xl">{fmt(proposal.service_value)}</span>
+              <p className="text-[#0047FF]/60 text-[10px] font-bold uppercase tracking-wider mt-1">por mês</p>
+            </div>
+          </div>
+
+          {proposal.ad_value > 0 && (
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <p className="text-white font-semibold text-sm">Verba de Anúncios recomendada</p>
+                <p className="text-slate-400 text-xs mt-1">Para investir diretamente nas plataformas (Google/Meta)</p>
+              </div>
+              <span className="text-white font-bold text-xl">{fmt(proposal.ad_value)}</span>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
+              <p className="text-slate-400 text-[10px] mb-1 uppercase tracking-widest">Prazo</p>
+              <p className="text-white font-bold text-lg">{proposal.contract_duration} meses</p>
+            </div>
+            {proposal.units && proposal.units > 1 && (
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
+                <p className="text-slate-400 text-[10px] mb-1 uppercase tracking-widest">Lojas</p>
+                <p className="text-white font-bold text-lg">{proposal.units} unidades</p>
+              </div>
+            )}
+          </div>
+        </div>
+        
+      </div>
+
+      <div className="mt-8 text-center z-20">
+        <a
+          href={whatsapp}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-3 bg-[#0047FF] hover:bg-[#003BCC] text-white font-bold px-8 py-4 rounded-full text-base transition-all shadow-[0_0_30px_rgba(0,71,255,0.4)] hover:shadow-[0_0_50px_rgba(0,71,255,0.6)] hover:-translate-y-1"
+        >
+          Aprovar Proposta <TrendingUp size={20} />
+        </a>
+      </div>
+    </div>
+  )
+}

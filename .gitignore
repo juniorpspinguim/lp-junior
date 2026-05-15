@@ -43,3 +43,7 @@ next-env.d.ts
 # deploy artifacts
 site.zip
 /public/venv
+next-dev.log
+*.html
+generate_variation.js
+
