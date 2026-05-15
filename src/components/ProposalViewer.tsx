@@ -200,6 +200,13 @@ export default function ProposalViewer({ proposal, services, whatsapp }: Proposa
 }
 
 function SlideCapa({ proposal }: { proposal: Proposal }) {
+  const getLogoUrl = (url: string | null) => {
+    if (!url) return null
+    if (url.startsWith('http') || url.startsWith('/')) return url
+    // If it's a relative path without leading slash, assume it might be in public root or we should at least prepend /
+    return `/${url}`
+  }
+
   return (
     <div className="flex flex-col items-center text-center">
       <div className="inline-flex items-center gap-2 bg-[#0047FF]/10 border border-[#0047FF]/20 text-[#0047FF] text-xs font-bold px-4 py-2 rounded-full tracking-wider uppercase mb-8 shadow-[0_0_15px_rgba(0,71,255,0.2)]">
@@ -213,7 +220,7 @@ function SlideCapa({ proposal }: { proposal: Proposal }) {
         <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 text-left">
           {proposal.logo_url && (
             <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-3xl flex items-center justify-center overflow-hidden shrink-0 shadow-2xl">
-              <img src={proposal.logo_url} alt={proposal.restaurant_name} className="w-full h-full object-contain p-2 md:p-3" />
+              <img src={getLogoUrl(proposal.logo_url) || ''} alt={proposal.restaurant_name} className="w-full h-full object-contain p-2 md:p-3" />
             </div>
           )}
           <div className="text-center md:text-left">

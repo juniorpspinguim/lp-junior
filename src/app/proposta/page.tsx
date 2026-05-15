@@ -213,7 +213,7 @@ export default function PropostaPage() {
                 ].map((logo, i) => (
                   <motion.div key={i} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={stagger(i)}
                     className="aspect-square rounded-2xl overflow-hidden bg-white/5 border border-white/10 hover:border-white/20 transition-all hover:scale-105 relative">
-                    <Image src={logo.src} alt={logo.alt} fill className="object-cover" unoptimized />
+                    <Image src={logo.src} alt={logo.alt} fill className="object-contain p-2" unoptimized />
                   </motion.div>
                 ))}
               </motion.div>
