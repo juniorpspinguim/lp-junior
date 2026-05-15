@@ -123,13 +123,19 @@ export default function Home() {
               priority
             />
           </div>
-          <nav className="flex items-center gap-4 md:gap-8 text-sm font-medium text-slate-300">
-            <a href="/login" className="flex items-center gap-2 hover:text-white transition-colors bg-white/5 px-4 py-2 rounded-full border border-white/10 hover:border-[#0047FF]/50 hover:bg-white/10">
+          <nav className="flex items-center gap-3 md:gap-6 text-sm font-medium">
+            <a 
+              href="/login" 
+              className="flex items-center gap-2 text-white hover:text-white transition-all bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full border border-white/20 hover:border-[#0047FF]/50 shadow-lg"
+            >
               <User size={16} className="text-[#0047FF]" />
-              <span className="hidden sm:inline">Acessar Painel</span>
-              <span className="sm:hidden">Entrar</span>
+              <span className="hidden xs:inline">Acessar Painel</span>
+              <span className="xs:hidden">Entrar</span>
             </a>
-            <a href="#inicio" className="hidden md:flex relative overflow-hidden px-6 py-2.5 rounded-full bg-[#25D366]/90 backdrop-blur-md border border-white/20 text-white font-semibold shadow-[0_8px_32px_rgba(37,211,102,0.3)] transition-all duration-500 hover:bg-[#25D366] hover:shadow-[0_0_30px_rgba(37,211,102,0.6)] hover:-translate-y-1 active:translate-y-0 before:absolute before:inset-0 before:-translate-x-[150%] before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:skew-x-12 before:transition-transform before:duration-700 hover:before:translate-x-[150%]">
+            <a 
+              href="#inicio" 
+              className="hidden sm:flex relative overflow-hidden px-6 py-2.5 rounded-full bg-[#25D366] text-white font-bold shadow-[0_8px_32px_rgba(37,211,102,0.3)] transition-all hover:scale-105 active:scale-95"
+            >
               Falar com o Pinguim
             </a>
           </nav>
