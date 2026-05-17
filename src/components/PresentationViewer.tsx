@@ -148,7 +148,21 @@ export default function PresentationViewer({ proposal, services }: PresentationV
             transition={{ duration: 0.3 }}
             className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-white/5 backdrop-blur-md border-b border-white/10"
           >
-            <Image src="/logo-pinguim.png" alt="Pinguim" width={100} height={30} className="object-contain brightness-0 invert" />
+            <div className="flex items-center gap-3">
+              <Image src="/logo-pinguim.png" alt="Pinguim" width={90} height={26} className="object-contain brightness-0 invert" />
+              {proposal.logo_url && (
+                <>
+                  <span className="text-white/30 text-base font-light select-none">+</span>
+                  <div className="h-8 min-w-[32px] bg-white rounded-lg flex items-center justify-center overflow-hidden p-1 shrink-0 shadow-lg border border-white/10">
+                    <img 
+                      src={proposal.logo_url} 
+                      alt={proposal.restaurant_name} 
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  </div>
+                </>
+              )}
+            </div>
             
             <div className="flex items-center gap-4">
               <div className="hidden sm:flex gap-1 text-xs font-medium text-slate-400">
