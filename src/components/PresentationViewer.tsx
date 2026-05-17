@@ -371,10 +371,10 @@ function SlideAutoridade() {
   return (
     <div className="flex flex-col items-center w-full max-w-6xl mx-auto px-4">
       <div className="text-center mb-8 md:mb-12">
-        <p className="text-slate-500 text-xs uppercase tracking-[0.2em] font-bold mb-3">Quem Somos</p>
+        <p className="text-slate-500 text-xs uppercase tracking-[0.2em] font-bold mb-3">Quem é a Pinguim</p>
         <h2 className="text-3xl md:text-5xl font-black leading-tight text-white">
-          Sua operação merece um<br/>
-          <span className="text-[#0047FF]">marketing de alto nível.</span>
+          Sua operação precisa de quem<br/>
+          <span className="text-[#0047FF]">realmente vive o seu mercado.</span>
         </h2>
       </div>
 
