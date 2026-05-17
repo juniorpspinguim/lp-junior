@@ -367,17 +367,29 @@ function SlideAutoridade() {
           <div className="absolute inset-0 bg-[#0047FF]/10 blur-[100px] rounded-full pointer-events-none" />
           
           {/* Stacked Photos Layout */}
-          <div className="relative w-full max-w-[300px] aspect-[4/5] mx-auto">
-            {/* Background card (Mockup) */}
-            <div className="absolute -left-8 -bottom-4 w-full h-full rounded-3xl overflow-hidden border border-white/10 shadow-2xl opacity-40 scale-95 translate-y-4 -rotate-3 transition-all duration-500 hover:opacity-60">
+          <div className="relative w-full max-w-[280px] aspect-[4/5] mx-auto">
+            {/* Background card 1 (Mockup - Back) */}
+            <div className="absolute -left-12 -bottom-6 w-full h-full rounded-3xl overflow-hidden border border-white/5 shadow-xl opacity-20 scale-90 translate-y-6 -rotate-6 transition-all duration-500">
               <img 
                 src="/mockup.png" 
                 alt="Mockup do Sistema" 
                 className="w-full h-full object-cover"
               />
             </div>
+
+            {/* Background card 2 (Stage Photo - Middle) */}
+            <div className="absolute -left-6 -bottom-3 w-full h-full rounded-3xl overflow-hidden border border-white/10 shadow-2xl opacity-60 scale-95 translate-y-3 -rotate-3 bg-[#0F1014] transition-all duration-500 hover:opacity-85">
+              <div className="w-full h-full relative">
+                <img 
+                  src="/foto-junior-palco.jpg" 
+                  alt="Junior Pinguim - Palestrando" 
+                  className="w-full h-full object-cover object-center"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              </div>
+            </div>
             
-            {/* Foreground card (Junior Photo) */}
+            {/* Foreground card (Junior Photo - Front) */}
             <div className="absolute inset-0 rounded-3xl overflow-hidden border border-[#D4AF37]/30 shadow-2xl rotate-2 hover:rotate-0 hover:scale-[1.02] transition-all duration-500 bg-[#0F1014]">
               <div className="w-full h-full relative">
                 <img 
