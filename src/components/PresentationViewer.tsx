@@ -336,8 +336,7 @@ function SlideAutoridade() {
 
   const [cards, setCards] = useState([
     { id: 'portrait', src: '/nova-foto-junior.png', title: 'Junior PS', subtitle: 'Fundador da Pinguim' },
-    { id: 'stage', src: '/foto-junior-palco.jpg', title: 'Junior PS', subtitle: 'Fundador da Pinguim' },
-    { id: 'mockup', src: '/mockup.png', title: 'Ecossistema Pinguim', subtitle: 'Marketing & Tecnologia' }
+    { id: 'stage', src: '/foto-junior-palco.jpg', title: 'Junior PS', subtitle: 'Fundador da Pinguim' }
   ])
 
   const rotateCards = useCallback(() => {
@@ -357,9 +356,8 @@ function SlideAutoridade() {
   }, [rotateCards])
 
   const cardPositions = [
-    { zIndex: 30, scale: 1, x: 0, y: 0, rotate: 2, opacity: 1 },
-    { zIndex: 20, scale: 0.95, x: -20, y: 10, rotate: -3, opacity: 0.8 },
-    { zIndex: 10, scale: 0.90, x: -40, y: 20, rotate: -6, opacity: 0.3 }
+    { zIndex: 20, scale: 1, x: 0, y: 0, rotate: 2, opacity: 1 },
+    { zIndex: 10, scale: 0.95, x: -16, y: 8, rotate: -3, opacity: 0.75 }
   ]
 
   return (
