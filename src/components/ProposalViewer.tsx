@@ -23,6 +23,12 @@ interface ProposalViewerProps {
 
 const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
 
+const getLogoUrl = (url: string | null) => {
+  if (!url) return null
+  if (url.startsWith('http') || url.startsWith('/')) return url
+  return `/${url}`
+}
+
 export default function ProposalViewer({ proposal, services, whatsapp }: ProposalViewerProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [direction, setDirection] = useState(1)
@@ -139,7 +145,21 @@ export default function ProposalViewer({ proposal, services, whatsapp }: Proposa
             transition={{ duration: 0.3 }}
             className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-white/5 backdrop-blur-md border-b border-white/10"
           >
-            <Image src="/logo-pinguim.png" alt="Pinguim" width={100} height={30} className="object-contain brightness-0 invert" />
+            <div className="flex items-center gap-3">
+              <Image src="/logo-pinguim.png" alt="Pinguim" width={90} height={26} className="object-contain brightness-0 invert" />
+              {proposal.logo_url && (
+                <>
+                  <span className="text-white/30 text-base font-light select-none">+</span>
+                  <div className="h-8 min-w-[32px] bg-white rounded-lg flex items-center justify-center overflow-hidden p-1 shrink-0 shadow-lg border border-white/10">
+                    <img 
+                      src={getLogoUrl(proposal.logo_url) || ''} 
+                      alt={proposal.restaurant_name} 
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  </div>
+                </>
+              )}
+            </div>
             
             <div className="flex items-center gap-4">
               <div className="hidden sm:flex gap-1 text-xs font-medium text-slate-400">
@@ -200,13 +220,6 @@ export default function ProposalViewer({ proposal, services, whatsapp }: Proposa
 }
 
 function SlideCapa({ proposal }: { proposal: Proposal }) {
-  const getLogoUrl = (url: string | null) => {
-    if (!url) return null
-    if (url.startsWith('http') || url.startsWith('/')) return url
-    // If it's a relative path without leading slash, assume it might be in public root or we should at least prepend /
-    return `/${url}`
-  }
-
   return (
     <div className="flex flex-col items-center text-center">
       <div className="inline-flex items-center gap-2 bg-[#0047FF]/10 border border-[#0047FF]/20 text-[#0047FF] text-xs font-bold px-4 py-2 rounded-full tracking-wider uppercase mb-8 shadow-[0_0_15px_rgba(0,71,255,0.2)]">

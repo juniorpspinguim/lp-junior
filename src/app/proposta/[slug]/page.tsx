@@ -2,6 +2,8 @@ import { createClient } from '@/utils/supabase/server'
 import { notFound } from 'next/navigation'
 import ProposalViewer from '@/components/ProposalViewer'
 
+export const dynamic = 'force-dynamic'
+
 const whatsapp = `https://wa.me/5571996623922?text=${encodeURIComponent('Olá! Acabei de ver a proposta e quero saber mais sobre os próximos passos!')}`
 
 export default async function PropostaPublicaPage({ params }: { params: Promise<{ slug: string }> }) {
