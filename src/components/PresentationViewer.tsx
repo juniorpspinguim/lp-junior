@@ -175,12 +175,15 @@ export default function PresentationViewer({ proposal, services }: PresentationV
                 return resolvedLogo ? (
                   <>
                     <span className="text-white/30 text-base font-light select-none">+</span>
-                    <div className="h-8 min-w-[32px] bg-white rounded-lg flex items-center justify-center overflow-hidden p-1 shrink-0 shadow-lg border border-white/10">
-                      <img 
-                        src={resolvedLogo} 
-                        alt={proposal.restaurant_name} 
-                        className="max-h-full max-w-full object-contain"
-                      />
+                    <div className="flex items-center gap-2 bg-white/5 border border-white/10 pl-1.5 pr-3 py-1 rounded-full backdrop-blur-sm">
+                      <div className="h-6 w-6 bg-white rounded-full flex items-center justify-center overflow-hidden p-0.5 shrink-0">
+                        <img 
+                          src={resolvedLogo} 
+                          alt={proposal.restaurant_name} 
+                          className="max-h-full max-w-full object-contain"
+                        />
+                      </div>
+                      <span className="text-white font-bold text-xs tracking-tight shrink-0">{proposal.restaurant_name}</span>
                     </div>
                   </>
                 ) : null;
