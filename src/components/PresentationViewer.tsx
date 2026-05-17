@@ -316,53 +316,85 @@ function SlideCapa({ proposal }: { proposal: Proposal }) {
 
 // SLIDE 2: Autoridade
 function SlideAutoridade() {
-  const stats = [
-    { icon: <Users size={20} />, label: 'Especialistas', value: 'Time focado 100% em Food Service' },
-    { icon: <ShieldCheck size={20} />, label: 'Metodologia', value: 'Processos validados em +200 restaurantes' },
-    { icon: <Award size={20} />, label: 'Resultado', value: 'Foco total em ROI e escala de vendas' },
+  const points = [
+    {
+      icon: <UtensilsCrossed size={20} className="text-[#0047FF]" />,
+      title: 'Foco 100% Gastronômico',
+      text: 'Especialistas em marketing para restaurantes e deliveries, com mais de 4 anos de atuação exclusiva no setor.'
+    },
+    {
+      icon: <TrendingUp size={20} className="text-[#0047FF]" />,
+      title: 'Decisões Guiadas por Dados',
+      text: 'Nosso propósito é transformar dados e comunicação em resultados reais, gerando vendas previsíveis e diárias.'
+    },
+    {
+      icon: <Users size={20} className="text-[#0047FF]" />,
+      title: 'Clube do Pinguim',
+      text: 'Responsáveis pelo maior ecossistema de networking, estratégias e capacitação para agências de food service do Brasil.'
+    }
   ]
 
   return (
-    <div className="flex flex-col items-center w-full">
-      <p className="text-slate-500 text-xs uppercase tracking-[0.2em] font-semibold mb-4 text-center">Sobre a Pinguim</p>
-      <h2 className="text-3xl md:text-5xl font-black mb-8 text-center leading-tight">
-        Sua operação merece um<br/>
-        <span className="text-[#0047FF]">marketing de alto nível.</span>
-      </h2>
+    <div className="flex flex-col items-center w-full max-w-6xl mx-auto px-4">
+      <div className="text-center mb-8 md:mb-12">
+        <p className="text-slate-500 text-xs uppercase tracking-[0.2em] font-bold mb-3">Quem Somos</p>
+        <h2 className="text-3xl md:text-5xl font-black leading-tight text-white">
+          Sua operação merece um<br/>
+          <span className="text-[#0047FF]">marketing de alto nível.</span>
+        </h2>
+      </div>
 
-      <div className="grid md:grid-cols-2 gap-10 items-center w-full max-w-4xl">
-        <div className="space-y-6">
-          <p className="text-slate-400 text-base md:text-lg leading-relaxed">
-            A Pinguim não é apenas uma agência. Somos o seu **braço direito estratégico**. 
-            Entendemos as dores de quem opera no "fogo cruzado" entre salão e delivery.
-          </p>
-          <div className="space-y-4">
-            {stats.map((stat, i) => (
-              <div key={i} className="flex items-center gap-4 group">
-                <div className="w-10 h-10 bg-[#0047FF]/10 border border-[#0047FF]/20 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-[#0047FF]/20 transition-colors text-[#0047FF]">
-                  {stat.icon}
+      <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full">
+        {/* Left Side: Copy */}
+        <div className="lg:col-span-7 space-y-6 md:space-y-8">
+          <div className="space-y-4 md:space-y-6">
+            {points.map((pt, i) => (
+              <div key={i} className="flex gap-4 p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all duration-300 group">
+                <div className="w-12 h-12 rounded-xl bg-[#0047FF]/10 flex items-center justify-center shrink-0 group-hover:bg-[#0047FF]/20 transition-colors">
+                  {pt.icon}
                 </div>
-                <div>
-                  <p className="text-white font-bold text-sm">{stat.label}</p>
-                  <p className="text-slate-500 text-xs">{stat.value}</p>
+                <div className="space-y-1">
+                  <h3 className="text-white font-bold text-base md:text-lg group-hover:text-[#0047FF] transition-colors">{pt.title}</h3>
+                  <p className="text-slate-400 text-sm leading-relaxed">{pt.text}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="relative">
-          <div className="absolute inset-0 bg-[#0047FF] blur-[100px] opacity-20" />
-          <div className="relative bg-[#0F1014] border border-white/10 rounded-[2.5rem] p-1 overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
-             <div className="bg-gradient-to-br from-white/[0.05] to-transparent p-8 rounded-[2.4rem]">
-                <div className="w-16 h-16 bg-[#0047FF] rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-[#0047FF]/20">
-                  <Image src="/logo-pinguim.png" alt="Pinguim" width={40} height={12} className="object-contain brightness-0 invert" />
+        {/* Right Side: Photo Space */}
+        <div className="lg:col-span-5 relative flex items-center justify-center min-h-[350px] lg:min-h-[420px] w-full">
+          <div className="absolute inset-0 bg-[#0047FF]/10 blur-[100px] rounded-full pointer-events-none" />
+          
+          {/* Stacked Photos Layout */}
+          <div className="relative w-full max-w-[300px] aspect-[4/5] mx-auto">
+            {/* Background card (Mockup) */}
+            <div className="absolute -left-8 -bottom-4 w-full h-full rounded-3xl overflow-hidden border border-white/10 shadow-2xl opacity-40 scale-95 translate-y-4 -rotate-3 transition-all duration-500 hover:opacity-60">
+              <img 
+                src="/mockup.png" 
+                alt="Mockup do Sistema" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+            
+            {/* Foreground card (Junior Photo) */}
+            <div className="absolute inset-0 rounded-3xl overflow-hidden border border-[#D4AF37]/30 shadow-2xl rotate-2 hover:rotate-0 hover:scale-[1.02] transition-all duration-500 bg-[#0F1014]">
+              <div className="w-full h-full relative">
+                <img 
+                  src="/nova-foto-junior.png" 
+                  alt="Junior Pinguim - Fundador" 
+                  className="w-full h-full object-cover object-top"
+                />
+                {/* Visual overlay gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                
+                {/* Floating Badge */}
+                <div className="absolute bottom-4 left-4 right-4 bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl">
+                  <p className="text-white font-black text-sm tracking-wide">Junior Pinguim</p>
+                  <p className="text-[#D4AF37] text-[10px] uppercase font-bold tracking-widest mt-0.5">Fundador & CEO</p>
                 </div>
-                <p className="text-white text-xl font-black leading-tight mb-4 italic">
-                  "Nascemos para tirar o dono do restaurante do operacional e colocá-lo no controle do crescimento."
-                </p>
-                <p className="text-[#0047FF] text-sm font-bold uppercase tracking-wider">— Time Pinguim</p>
-             </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
