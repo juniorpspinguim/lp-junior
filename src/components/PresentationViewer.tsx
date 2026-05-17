@@ -336,7 +336,11 @@ function SlideAutoridade() {
 
   const [cards, setCards] = useState([
     { id: 'portrait', src: '/nova-foto-junior.png', title: 'Junior PS', subtitle: 'Fundador da Pinguim' },
-    { id: 'stage', src: '/foto-junior-palco.jpg', title: 'Junior PS', subtitle: 'Fundador da Pinguim' }
+    { id: 'stage', src: '/foto-junior-palco.jpg', title: 'Junior PS', subtitle: 'Fundador da Pinguim' },
+    { id: 'camera', src: '/foto-junior-camera.jpg', title: 'Junior PS', subtitle: 'Fundador da Pinguim' },
+    { id: 'interview', src: '/foto-junior-entrevista.png', title: 'Junior PS', subtitle: 'Fundador da Pinguim' },
+    { id: 'palestra2', src: '/foto-junior-palestra2.jpg', title: 'Junior PS', subtitle: 'Fundador da Pinguim' },
+    { id: 'feira', src: '/foto-junior-feira.jpg', title: 'Junior PS', subtitle: 'Fundador da Pinguim' }
   ])
 
   const rotateCards = useCallback(() => {
@@ -356,8 +360,12 @@ function SlideAutoridade() {
   }, [rotateCards])
 
   const cardPositions = [
-    { zIndex: 20, scale: 1, x: 0, y: 0, rotate: 2, opacity: 1 },
-    { zIndex: 10, scale: 0.95, x: -16, y: 8, rotate: -3, opacity: 0.75 }
+    { zIndex: 30, scale: 1, x: 0, y: 0, rotate: 2, opacity: 1 },
+    { zIndex: 20, scale: 0.95, x: -16, y: 8, rotate: -3, opacity: 0.8 },
+    { zIndex: 10, scale: 0.90, x: -32, y: 16, rotate: -6, opacity: 0.4 },
+    { zIndex: 0, scale: 0.85, x: -48, y: 24, rotate: -8, opacity: 0 },
+    { zIndex: 0, scale: 0.85, x: -48, y: 24, rotate: -8, opacity: 0 },
+    { zIndex: 0, scale: 0.85, x: -48, y: 24, rotate: -8, opacity: 0 }
   ]
 
   return (
@@ -392,7 +400,7 @@ function SlideAutoridade() {
         <div className="lg:col-span-5 relative flex items-center justify-center min-h-[350px] lg:min-h-[420px] w-full">
           <div className="absolute inset-0 bg-[#0047FF]/10 blur-[100px] rounded-full pointer-events-none" />
           
-          <div className="relative w-full max-w-[280px] aspect-[4/5] mx-auto select-none">
+          <div className="relative w-full max-w-[300px] aspect-[3/4] mx-auto select-none">
             {cards.map((card, idx) => {
               const pos = cardPositions[idx] || cardPositions[cardPositions.length - 1];
               return (
