@@ -23,10 +23,24 @@ interface ProposalViewerProps {
 
 const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
 
-const getLogoUrl = (url: string | null) => {
-  if (!url) return null
-  if (url.startsWith('http') || url.startsWith('/')) return url
-  return `/${url}`
+const getLogoUrl = (url: string | null, restaurantName?: string) => {
+  if (url) {
+    if (url.startsWith('http') || url.startsWith('/')) return url
+    return `/${url}`
+  }
+  
+  if (restaurantName) {
+    const name = restaurantName.toLowerCase()
+    if (name.includes('071') || name.includes('burger')) return '/Fundo de Logo 071 Burger Salvador Removido.png'
+    if (name.includes('villa') || name.includes('bistro')) return '/Logo Villa Bistro Curitiba.png'
+    if (name.includes('fat') || name.includes('guys')) return '/Fundo de Logo FatGuys Salvador  png.png'
+    if (name.includes('feijuca') || name.includes('santa')) return '/Santa Feijuca.png'
+    if (name.includes('subway')) return '/logo-subway-256.png'
+    if (name.includes('noa') || name.includes('poke')) return '/592238295_122120029046993995_5886872904706956800_n.png'
+    if (name.includes('gege') || name.includes('delivery')) return '/Fundo de Grupo Gege Belo Horizonte Removido.png'
+  }
+  
+  return null
 }
 
 export default function ProposalViewer({ proposal, services, whatsapp }: ProposalViewerProps) {
@@ -147,18 +161,21 @@ export default function ProposalViewer({ proposal, services, whatsapp }: Proposa
           >
             <div className="flex items-center gap-3">
               <Image src="/logo-pinguim.png" alt="Pinguim" width={90} height={26} className="object-contain brightness-0 invert" />
-              {proposal.logo_url && (
-                <>
-                  <span className="text-white/30 text-base font-light select-none">+</span>
-                  <div className="h-8 min-w-[32px] bg-white rounded-lg flex items-center justify-center overflow-hidden p-1 shrink-0 shadow-lg border border-white/10">
-                    <img 
-                      src={getLogoUrl(proposal.logo_url) || ''} 
-                      alt={proposal.restaurant_name} 
-                      className="max-h-full max-w-full object-contain"
-                    />
-                  </div>
-                </>
-              )}
+              {(() => {
+                const resolvedLogo = getLogoUrl(proposal.logo_url, proposal.restaurant_name);
+                return resolvedLogo ? (
+                  <>
+                    <span className="text-white/30 text-base font-light select-none">+</span>
+                    <div className="h-8 min-w-[32px] bg-white rounded-lg flex items-center justify-center overflow-hidden p-1 shrink-0 shadow-lg border border-white/10">
+                      <img 
+                        src={resolvedLogo} 
+                        alt={proposal.restaurant_name} 
+                        className="max-h-full max-w-full object-contain"
+                      />
+                    </div>
+                  </>
+                ) : null;
+              })()}
             </div>
             
             <div className="flex items-center gap-4">
@@ -231,11 +248,14 @@ function SlideCapa({ proposal }: { proposal: Proposal }) {
         <div className="absolute -left-10 -bottom-10 w-48 h-48 bg-black/10 rounded-full blur-2xl" />
         
         <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 text-left">
-          {proposal.logo_url && (
-            <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-3xl flex items-center justify-center overflow-hidden shrink-0 shadow-2xl">
-              <img src={getLogoUrl(proposal.logo_url) || ''} alt={proposal.restaurant_name} className="w-full h-full object-contain p-2 md:p-3" />
-            </div>
-          )}
+          {(() => {
+            const resolvedLogo = getLogoUrl(proposal.logo_url, proposal.restaurant_name);
+            return resolvedLogo ? (
+              <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-3xl flex items-center justify-center overflow-hidden shrink-0 shadow-2xl">
+                <img src={resolvedLogo} alt={proposal.restaurant_name} className="w-full h-full object-contain p-2 md:p-3" />
+              </div>
+            ) : null;
+          })()}
           <div className="text-center md:text-left">
             <p className="text-white/60 text-sm font-bold uppercase tracking-widest mb-2">Proposta exclusiva para</p>
             <h1 className="text-4xl md:text-5xl font-black mb-3 leading-tight text-white">{proposal.restaurant_name}</h1>

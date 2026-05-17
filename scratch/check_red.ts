@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js'
 import fs from 'fs'
 
@@ -10,17 +9,19 @@ const supabase = createClient(
   getEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY')!
 )
 
-async function checkProposals() {
+async function updateProposalLogo() {
   const { data, error } = await supabase
     .from('proposals')
-    .select('id, slug, restaurant_name, logo_url, created_at')
+    .update({ logo_url: 'Fundo de Logo 071 Burger Salvador Removido.png' })
+    .eq('slug', 'm3kj9on')
+    .select()
 
   if (error) {
-    console.error('Error fetching proposals:', error)
+    console.error('Error updating proposal:', error)
     return
   }
 
-  console.log(JSON.stringify(data, null, 2))
+  console.log('Successfully updated proposal logo:', JSON.stringify(data, null, 2))
 }
 
-checkProposals()
+updateProposalLogo()
