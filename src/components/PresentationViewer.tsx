@@ -334,6 +334,34 @@ function SlideAutoridade() {
     }
   ]
 
+  const [cards, setCards] = useState([
+    { id: 'portrait', src: '/nova-foto-junior.png', title: 'Junior PS', subtitle: 'Fundador da Pinguim' },
+    { id: 'stage', src: '/foto-junior-palco.jpg', title: 'Junior PS', subtitle: 'Fundador da Pinguim' },
+    { id: 'mockup', src: '/mockup.png', title: 'Ecossistema Pinguim', subtitle: 'Marketing & Tecnologia' }
+  ])
+
+  const rotateCards = useCallback(() => {
+    setCards(prev => {
+      const next = [...prev]
+      const first = next.shift()!
+      next.push(first)
+      return next
+    })
+  }, [])
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      rotateCards()
+    }, 4500) // Shuffles automatically every 4.5s
+    return () => clearInterval(timer)
+  }, [rotateCards])
+
+  const cardPositions = [
+    { zIndex: 30, scale: 1, x: 0, y: 0, rotate: 2, opacity: 1 },
+    { zIndex: 20, scale: 0.95, x: -20, y: 10, rotate: -3, opacity: 0.8 },
+    { zIndex: 10, scale: 0.90, x: -40, y: 20, rotate: -6, opacity: 0.3 }
+  ]
+
   return (
     <div className="flex flex-col items-center w-full max-w-6xl mx-auto px-4">
       <div className="text-center mb-8 md:mb-12">
@@ -362,51 +390,53 @@ function SlideAutoridade() {
           </div>
         </div>
 
-        {/* Right Side: Photo Space */}
+        {/* Right Side: Animated Card Stack */}
         <div className="lg:col-span-5 relative flex items-center justify-center min-h-[350px] lg:min-h-[420px] w-full">
           <div className="absolute inset-0 bg-[#0047FF]/10 blur-[100px] rounded-full pointer-events-none" />
           
-          {/* Stacked Photos Layout */}
-          <div className="relative w-full max-w-[280px] aspect-[4/5] mx-auto">
-            {/* Background card 1 (Mockup - Back) */}
-            <div className="absolute -left-12 -bottom-6 w-full h-full rounded-3xl overflow-hidden border border-white/5 shadow-xl opacity-20 scale-90 translate-y-6 -rotate-6 transition-all duration-500">
-              <img 
-                src="/mockup.png" 
-                alt="Mockup do Sistema" 
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            {/* Background card 2 (Stage Photo - Middle) */}
-            <div className="absolute -left-6 -bottom-3 w-full h-full rounded-3xl overflow-hidden border border-white/10 shadow-2xl opacity-60 scale-95 translate-y-3 -rotate-3 bg-[#0F1014] transition-all duration-500 hover:opacity-85">
-              <div className="w-full h-full relative">
-                <img 
-                  src="/foto-junior-palco.jpg" 
-                  alt="Junior Pinguim - Palestrando" 
-                  className="w-full h-full object-cover object-center"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              </div>
-            </div>
-            
-            {/* Foreground card (Junior Photo - Front) */}
-            <div className="absolute inset-0 rounded-3xl overflow-hidden border border-[#D4AF37]/30 shadow-2xl rotate-2 hover:rotate-0 hover:scale-[1.02] transition-all duration-500 bg-[#0F1014]">
-              <div className="w-full h-full relative">
-                <img 
-                  src="/nova-foto-junior.png" 
-                  alt="Junior Pinguim - Fundador" 
-                  className="w-full h-full object-cover object-top"
-                />
-                {/* Visual overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                
-                {/* Floating Badge */}
-                <div className="absolute bottom-4 left-4 right-4 bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl">
-                  <p className="text-white font-black text-sm tracking-wide">Junior Pinguim</p>
-                  <p className="text-[#D4AF37] text-[10px] uppercase font-bold tracking-widest mt-0.5">Fundador & CEO</p>
-                </div>
-              </div>
-            </div>
+          <div className="relative w-full max-w-[280px] aspect-[4/5] mx-auto select-none">
+            {cards.map((card, idx) => {
+              const pos = cardPositions[idx] || cardPositions[cardPositions.length - 1];
+              return (
+                <motion.div
+                  key={card.id}
+                  style={{ zIndex: pos.zIndex }}
+                  animate={{
+                    scale: pos.scale,
+                    x: pos.x,
+                    y: pos.y,
+                    rotate: pos.rotate,
+                    opacity: pos.opacity,
+                  }}
+                  transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+                  onClick={rotateCards}
+                  className={`absolute inset-0 rounded-3xl overflow-hidden shadow-2xl bg-[#0F1014] cursor-pointer border transition-colors duration-300 ${
+                    idx === 0 ? 'border-[#D4AF37]/50 shadow-[0_10px_30px_rgba(212,175,55,0.15)]' : 'border-white/10'
+                  }`}
+                >
+                  <div className="w-full h-full relative">
+                    <img 
+                      src={card.src} 
+                      alt={card.title} 
+                      className="w-full h-full object-cover object-center"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
+                    
+                    {/* Floating Badge (Only display text for active front card) */}
+                    {idx === 0 && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="absolute bottom-4 left-4 right-4 bg-black/40 backdrop-blur-md border border-white/20 p-4 rounded-2xl"
+                      >
+                        <p className="text-white font-black text-sm tracking-wide">{card.title}</p>
+                        <p className="text-[#D4AF37] text-[10px] uppercase font-bold tracking-widest mt-0.5">{card.subtitle}</p>
+                      </motion.div>
+                    )}
+                  </div>
+                </motion.div>
+              )
+            })}
           </div>
         </div>
       </div>
