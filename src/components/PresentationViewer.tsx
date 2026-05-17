@@ -23,6 +23,12 @@ interface PresentationViewerProps {
 
 const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
 
+const getLogoUrl = (url: string | null) => {
+  if (!url) return null
+  if (url.startsWith('http') || url.startsWith('/')) return url
+  return `/${url}`
+}
+
 export default function PresentationViewer({ proposal, services }: PresentationViewerProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [direction, setDirection] = useState(1) // 1 para baixo (next), -1 para cima (prev)
@@ -155,7 +161,7 @@ export default function PresentationViewer({ proposal, services }: PresentationV
                   <span className="text-white/30 text-base font-light select-none">+</span>
                   <div className="h-8 min-w-[32px] bg-white rounded-lg flex items-center justify-center overflow-hidden p-1 shrink-0 shadow-lg border border-white/10">
                     <img 
-                      src={proposal.logo_url} 
+                      src={getLogoUrl(proposal.logo_url) || ''} 
                       alt={proposal.restaurant_name} 
                       className="max-h-full max-w-full object-contain"
                     />
@@ -273,7 +279,7 @@ function SlideCapa({ proposal }: { proposal: Proposal }) {
       <div className="flex items-center gap-4 bg-white/[0.04] border border-[#D4AF37]/40 px-6 py-4 rounded-2xl backdrop-blur-md shadow-[0_0_20px_rgba(212,175,55,0.1)]">
         {proposal.logo_url && (
           <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center overflow-hidden shrink-0">
-            <img src={proposal.logo_url} alt={proposal.restaurant_name} className="w-full h-full object-contain p-1" />
+            <img src={getLogoUrl(proposal.logo_url) || ''} alt={proposal.restaurant_name} className="w-full h-full object-contain p-1" />
           </div>
         )}
         <div className="text-left">
@@ -506,7 +512,7 @@ function SlideProposta({ proposal, services, whatsapp }: { proposal: Proposal, s
           </div>
           {proposal.logo_url && (
             <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center overflow-hidden shadow-lg shrink-0">
-              <img src={proposal.logo_url} alt="Logo" className="w-full h-full object-contain p-1" />
+              <img src={getLogoUrl(proposal.logo_url) || ''} alt="Logo" className="w-full h-full object-contain p-1" />
             </div>
           )}
         </div>
