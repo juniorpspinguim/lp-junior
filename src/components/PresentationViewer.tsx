@@ -320,12 +320,12 @@ function SlideAutoridade() {
     {
       icon: <UtensilsCrossed size={20} className="text-[#0047FF]" />,
       title: 'Foco 100% Gastronômico',
-      text: 'Especialistas em marketing para restaurantes e deliveries, com mais de 4 anos de atuação exclusiva no setor.'
+      text: 'Especialistas em marketing para restaurantes e deliveries, com mais de 5 anos de atuação exclusiva no setor.'
     },
     {
       icon: <TrendingUp size={20} className="text-[#0047FF]" />,
       title: 'Decisões Guiadas por Dados',
-      text: 'Nosso propósito é transformar dados e comunicação em resultados reais, gerando vendas previsíveis e diárias.'
+      text: 'Nosso propósito é transformar dados e comunicação em resultados reais, potencializando o que está certo e corrigindo o que precisa de melhoria.'
     },
     {
       icon: <Users size={20} className="text-[#0047FF]" />,
