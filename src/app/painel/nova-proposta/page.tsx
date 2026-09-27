@@ -1,21 +1,15 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import { ArrowLeft, Check, Copy, ExternalLink, Loader2, ImagePlus, X, Plus, Trash2, Eye } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import ProposalViewer from '@/components/ProposalViewer'
+import CommercialPresentation from '@/components/CommercialPresentation'
+import { PINGUIM_SERVICES, BASE_PRICE, AD_BUDGET, MARKETPLACE_PRICE, marketplaceTotal } from '@/lib/proposal-commercial'
 
 type PlanType = 'metodo_pinguim' | 'metodo_marketplace' | 'personalizado'
-
-const PINGUIM_SERVICES = [
-  'Tráfego Pago',
-  'Gestão de Google Meu Negócio',
-  'Análise de Ativos',
-  'Engenharia de Cardápio',
-]
 
 const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
 
@@ -28,8 +22,8 @@ const PLANS = [
   },
   {
     id: 'metodo_marketplace' as PlanType,
-    label: 'Método Pinguim + Marketplace',
-    description: 'Inclui gestão de plataformas de delivery',
+    label: 'Método Pinguim com adicional de marketplace',
+    description: 'Mesmo plano, com cobrança adicional por plataforma e unidade',
     services: PINGUIM_SERVICES,
   },
   {
@@ -48,8 +42,9 @@ export default function NovaPropostaPage() {
   const [units, setUnits] = useState(1)
   const [marketplaces, setMarketplaces] = useState({ ifood: false, '99food': false })
   const [customServices, setCustomServices] = useState<string[]>([''])
-  const [serviceValue, setServiceValue] = useState(0)
-  const [adValue, setAdValue] = useState(0)
+  const [serviceValue, setServiceValue] = useState(BASE_PRICE)
+  const [marketplacePrice, setMarketplacePrice] = useState(MARKETPLACE_PRICE)
+  const [adValue, setAdValue] = useState(AD_BUDGET)
   const [contractDuration, setContractDuration] = useState(3)
   const [leadSource, setLeadSource] = useState('Indicação')
   const [customLeadSource, setCustomLeadSource] = useState('')
@@ -60,6 +55,13 @@ export default function NovaPropostaPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
   const supabase = createClient()
+
+  useEffect(() => {
+    if (!showPreview) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = previous; };
+  }, [showPreview]);
 
   const handleLogoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -85,19 +87,24 @@ export default function NovaPropostaPage() {
     if (plan === 'metodo_pinguim') return PINGUIM_SERVICES.map(name => ({ id: name, name }))
     if (plan === 'metodo_marketplace') {
       const mp = []
-      if (marketplaces.ifood) mp.push({ id: 'ifood', name: 'Gestão de Marketplace - iFood' })
-      if (marketplaces['99food']) mp.push({ id: '99food', name: 'Gestão de Marketplace - 99' })
+      if (marketplaces.ifood) mp.push({ id: 'ifood', name: 'Gestão de Marketplace - iFood', price: marketplacePrice, quantity: units })
+      if (marketplaces['99food']) mp.push({ id: '99food', name: 'Gestão de Marketplace - 99', price: marketplacePrice, quantity: units })
       return [...PINGUIM_SERVICES.map(name => ({ id: name, name })), ...mp]
     }
     return customServices.filter(s => s.trim()).map(name => ({ id: name, name }))
   }
 
   const servicesList = buildServices()
+  const platformCount = plan === 'metodo_marketplace' ? Number(marketplaces.ifood) + Number(marketplaces['99food']) : 0
+  const extraValue = marketplaceTotal(platformCount, units, marketplacePrice)
+  const totalServiceValue = serviceValue + extraValue
 
   const handleGenerate = async () => {
     if (!restaurantName.trim()) return alert('Informe o nome do restaurante.')
     if (plan === 'metodo_marketplace' && !marketplaces.ifood && !marketplaces['99food'])
       return alert('Selecione ao menos uma plataforma de Marketplace.')
+    if (![serviceValue, adValue, marketplacePrice].every(v => Number.isFinite(v) && v >= 0)) return alert('Informe valores válidos, iguais ou maiores que zero.')
+    if (!servicesList.length) return alert('Adicione ao menos um serviço.')
     setLoading(true)
     const slug = Math.random().toString(36).substring(2, 9)
     const { data: { user } } = await supabase.auth.getUser()
@@ -119,7 +126,7 @@ export default function NovaPropostaPage() {
       user_id: user?.id,
       restaurant_name: restaurantName.trim(),
       services: servicesList,
-      service_value: serviceValue,
+      service_value: totalServiceValue,
       ad_value: adValue,
       contract_duration: contractDuration,
       lead_source: finalLeadSource,
@@ -311,10 +318,15 @@ export default function NovaPropostaPage() {
               </h2>
               <div className="space-y-3">
                 <div>
-                  <label className="text-slate-400 text-xs mb-1.5 block">Honorários mensais (R$)</label>
+                  <label className="text-slate-400 text-xs mb-1.5 block">Honorários base mensais (R$)</label>
                   <input type="number" value={serviceValue || ''} onChange={e => setServiceValue(Number(e.target.value))}
                     className="w-full bg-[#1A1A24]/60 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0047FF]/60 focus:ring-1 focus:ring-[#0047FF]/50 transition-all text-sm" placeholder="0" />
                 </div>
+                {plan === 'metodo_marketplace' && <div>
+                  <label htmlFor="marketplace-price" className="text-slate-400 text-xs mb-1.5 block">Adicional mensal por plataforma e unidade (R$)</label>
+                  <input id="marketplace-price" type="number" min="0" value={marketplacePrice} onChange={e => setMarketplacePrice(Number(e.target.value))} className="w-full bg-[#1A1A24]/60 border border-white/10 rounded-xl px-4 py-3 text-white text-sm" />
+                  <p className="text-xs text-slate-400 mt-2">{platformCount} plataforma(s) × {units} unidade(s) × {fmt(marketplacePrice)} = {fmt(extraValue)}/mês. As plataformas selecionadas serão geridas em todas as unidades informadas.</p>
+                </div>}
                 <div>
                   <label className="text-slate-400 text-xs mb-1.5 block">Verba de Anúncios (pago pelo cliente)</label>
                   <input type="number" value={adValue || ''} onChange={e => setAdValue(Number(e.target.value))}
@@ -389,8 +401,10 @@ export default function NovaPropostaPage() {
                 <div className="border-t border-white/5 pt-4 space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-slate-400 text-sm">Honorários</span>
-                    <span className="text-white font-bold text-lg">{fmt(serviceValue)}</span>
+                    <span className="text-white font-bold text-lg">{fmt(totalServiceValue)}</span>
                   </div>
+                  {extraValue > 0 && <p className="text-xs text-slate-400">Base: {fmt(serviceValue)} + marketplaces: {fmt(extraValue)}/mês</p>}
+                  <p className="text-xs text-slate-400">Pagamento via Pix no início do período.</p>
                   {adValue > 0 && (
                     <div className="flex justify-between items-center bg-white/[0.03] rounded-xl px-3 py-2.5">
                       <p className="text-slate-400 text-xs">Verba de Anúncios</p>
@@ -421,7 +435,7 @@ export default function NovaPropostaPage() {
                     disabled={!restaurantName.trim()}
                     className="w-full flex items-center justify-center gap-2 border border-white/10 bg-white/5 hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed text-slate-300 font-semibold py-3.5 rounded-xl transition-all text-sm"
                   >
-                    <Eye size={16} /> Pré-visualizar Proposta
+                    <Eye size={16} /> Pré-visualizar apresentação
                   </button>
                   <button onClick={handleGenerate} disabled={loading || !restaurantName.trim()}
                     className="w-full flex items-center justify-center gap-2 bg-[#0047FF] hover:bg-[#003BCC] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(0,71,255,0.3)] hover:shadow-[0_0_40px_rgba(0,71,255,0.5)]">
@@ -440,7 +454,7 @@ export default function NovaPropostaPage() {
                   <div className="grid grid-cols-2 gap-3">
                     <a href={proposalUrl!} target="_blank" rel="noopener noreferrer"
                       className="flex items-center justify-center gap-1.5 border border-[#0047FF]/30 bg-[#0047FF]/10 hover:bg-[#0047FF]/20 text-[#0047FF] font-semibold py-3 rounded-xl transition-all text-sm">
-                      <ExternalLink size={14} /> Só Proposta
+                      <ExternalLink size={14} /> Ver proposta
                     </a>
                     <a href={generatedSlug ? `/apresentacao/${generatedSlug}` : '/'} target="_blank" rel="noopener noreferrer"
                       className="flex items-center justify-center gap-1.5 border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 font-semibold py-3 rounded-xl transition-all text-sm">
@@ -473,18 +487,16 @@ export default function NovaPropostaPage() {
             👀 MODO RASCUNHO — não foi salvo
           </div>
 
-          <ProposalViewer
+          <CommercialPresentation
             proposal={{
-              slug: 'preview',
               restaurant_name: restaurantName || 'Nome do Restaurante',
               logo_url: logoPreview,
-              service_value: serviceValue,
+              service_value: totalServiceValue,
               ad_value: adValue,
               contract_duration: contractDuration,
               units,
+              services: servicesList,
             }}
-            services={servicesList}
-            whatsapp="#"
           />
         </div>
       )}

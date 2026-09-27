@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import { Lock, Mail, Loader2, ArrowRight, Eye, EyeOff } from 'lucide-react'
-import Image from 'next/image'
+import WhitePinguimLogo from '@/components/WhitePinguimLogo'
 import Link from 'next/link'
 
 export default function LoginPage() {
@@ -54,14 +54,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="flex justify-center mb-10">
           <Link href="/">
-            <Image
-              src="/logo-pinguim.png"
-              alt="Pinguim Marketing"
-              width={220}
-              height={62}
-              className="object-contain hover:opacity-80 transition-opacity brightness-0 invert"
-              priority
-            />
+            <WhitePinguimLogo />
           </Link>
         </div>
 
@@ -142,6 +135,8 @@ export default function LoginPage() {
                   </button>
                 </div>
               </div>
+
+              <Link href="/recuperar-senha" className="block text-right text-sm text-blue-400 hover:text-blue-300">Esqueci minha senha</Link>
 
               {/* Error */}
               {error && (

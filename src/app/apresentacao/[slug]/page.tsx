@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { notFound } from 'next/navigation'
-import PresentationViewer from '@/components/PresentationViewer'
+import CommercialPresentation from '@/components/CommercialPresentation'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,7 +16,5 @@ export default async function ApresentacaoPage({ params }: { params: Promise<{ s
 
   if (!proposal) notFound()
 
-  const services: { id: string; name: string; price: number }[] = proposal.services ?? []
-
-  return <PresentationViewer proposal={proposal} services={services} />
+  return <CommercialPresentation proposal={proposal} />
 }

@@ -130,3 +130,13 @@
 #br-pr, #br-pr path { animation: lightUpAscend 1s ease-in-out both; animation-delay: 1.9s; }
 #br-sc, #br-sc path { animation: lightUpAscend 1s ease-in-out both; animation-delay: 2.0s; }
 #br-rs, #br-rs path { animation: lightUpAscend 1s ease-in-out both; animation-delay: 2.1s; }
+
+@keyframes proposal-logos-scroll {
+  to { transform: translateX(-50%); }
+}
+.proposal-logo-track { animation: proposal-logos-scroll 38s linear infinite; }
+.proposal-logo-marquee:hover .proposal-logo-track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .proposal-logo-track { animation: none; }
+  .proposal-logo-marquee { overflow-x: auto; }
+}

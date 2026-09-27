@@ -1,10 +1,8 @@
 import { createClient } from '@/utils/supabase/server'
 import { notFound } from 'next/navigation'
-import ProposalViewer from '@/components/ProposalViewer'
+import CommercialPresentation from '@/components/CommercialPresentation'
 
 export const dynamic = 'force-dynamic'
-
-const whatsapp = `https://wa.me/5571996623922?text=${encodeURIComponent('Olá! Acabei de ver a proposta e quero saber mais sobre os próximos passos!')}`
 
 export default async function PropostaPublicaPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -18,7 +16,5 @@ export default async function PropostaPublicaPage({ params }: { params: Promise<
 
   if (!proposal) notFound()
 
-  const services: { id: string; name: string; price: number }[] = proposal.services ?? []
-
-  return <ProposalViewer proposal={proposal} services={services} whatsapp={whatsapp} />
+  return <CommercialPresentation proposal={proposal} />
 }
