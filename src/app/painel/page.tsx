@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
-import { LogOut, PlusCircle, CheckCircle2, XCircle, Clock, FileText, LayoutDashboard, Settings, Trash2 } from 'lucide-react'
+import { LogOut, PlusCircle, CheckCircle2, XCircle, Clock, FileText, LayoutDashboard, Settings, Trash2, Users } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import ProposalTrashButton from '@/components/ProposalTrashButton'
@@ -71,6 +71,8 @@ export default async function PainelPage() {
           </Link>
 
           <Link href="/painel/lixeira" className="flex items-center gap-3 px-4 py-2.5 text-slate-400 hover:text-white text-sm"><Trash2 size={16}/>Lixeira</Link>
+
+          <Link href="/painel/comercial" className="flex items-center gap-3 px-4 py-2.5 text-slate-400 hover:text-white text-sm"><Users size={16}/>Comercial</Link>
 
           {/* Admin */}
           <Link
