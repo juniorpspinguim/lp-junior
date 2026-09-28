@@ -14,7 +14,7 @@ export default async function ApresentacaoPage({ params }: { params: Promise<{ s
     .eq('slug', slug)
     .single()
 
-  if (!proposal) notFound()
+  if (!proposal || proposal.deleted_at) notFound()
 
   return <CommercialPresentation proposal={proposal} />
 }

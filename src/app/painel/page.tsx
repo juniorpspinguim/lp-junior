@@ -5,9 +5,14 @@ import { createClient } from '@/utils/supabase/server'
 import { LogOut, PlusCircle, CheckCircle2, XCircle, Clock, FileText, LayoutDashboard, Settings, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { deleteProposal } from './actions'
+import ProposalTrashButton from '@/components/ProposalTrashButton'
+
+import { proposalReference } from '@/lib/proposal-reference'
 
 type Proposal = {
+  proposal_number?: number
+  proposal_year?: number
+  deleted_at?: string | null
   id: string
   created_at: string
   restaurant_name: string
@@ -37,7 +42,7 @@ export default async function PainelPage() {
     .select('*')
     .order('created_at', { ascending: false })
 
-  const list     = (proposals ?? []) as Proposal[]
+  const list     = ((proposals ?? []) as Proposal[]).filter(p => !p.deleted_at)
   const total    = list.length
   const approved = list.filter(p => p.status === 'approved').length
   const rejected = list.filter(p => p.status === 'rejected').length
@@ -64,6 +69,8 @@ export default async function PainelPage() {
             <LayoutDashboard size={16} />
             Dashboard
           </Link>
+
+          <Link href="/painel/lixeira" className="flex items-center gap-3 px-4 py-2.5 text-slate-400 hover:text-white text-sm"><Trash2 size={16}/>Lixeira</Link>
 
           {/* Admin */}
           <Link
@@ -152,7 +159,7 @@ export default async function PainelPage() {
                     <div className="flex-1 min-w-0">
                       <p className="text-white font-semibold truncate">{p.restaurant_name}</p>
                       <p className="text-slate-500 text-xs mt-0.5">
-                        {date} · {p.contract_duration} meses · {p.services?.length ?? 0} serviços
+                        Proposta {proposalReference(p)} · {date} · {p.contract_duration} meses · {p.services?.length ?? 0} serviços
                       </p>
                     </div>
                     <div className="flex items-center gap-3 shrink-0">
@@ -179,15 +186,7 @@ export default async function PainelPage() {
                           >
                             Apresentação
                           </a>
-                          <form action={deleteProposal.bind(null, p.id)}>
-                            <button
-                              type="submit"
-                              className="text-red-400 bg-red-400/10 hover:bg-red-400/20 transition-colors p-1.5 rounded-lg flex items-center justify-center"
-                              title="Apagar Proposta"
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          </form>
+                          <ProposalTrashButton id={p.id}/>
                         </div>
                     </div>
                   </div>

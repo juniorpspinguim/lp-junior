@@ -124,6 +124,7 @@ export default function NovaPropostaPage() {
 
     const { error } = await supabase.from('proposals').insert({
       user_id: user?.id,
+      plan_type: plan,
       restaurant_name: restaurantName.trim(),
       services: servicesList,
       service_value: totalServiceValue,

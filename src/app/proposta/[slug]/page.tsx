@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { notFound } from 'next/navigation'
-import CommercialPresentation from '@/components/CommercialPresentation'
+import CompactProposal from '@/components/CompactProposal'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,7 +14,7 @@ export default async function PropostaPublicaPage({ params }: { params: Promise<
     .eq('slug', slug)
     .single()
 
-  if (!proposal) notFound()
+  if (!proposal || proposal.deleted_at) notFound()
 
-  return <CommercialPresentation proposal={proposal} />
+  return <CompactProposal proposal={proposal} />
 }
