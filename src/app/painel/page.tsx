@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { LogOut, PlusCircle, CheckCircle2, XCircle, Clock, FileText, LayoutDashboard, Settings, Trash2, Users } from 'lucide-react'
 import Link from 'next/link'
-import Image from 'next/image'
+import WhitePinguimLogo from '@/components/WhitePinguimLogo'
 import ProposalTrashButton from '@/components/ProposalTrashButton'
 
 import { proposalReference } from '@/lib/proposal-reference'
@@ -56,7 +56,7 @@ export default async function PainelPage() {
       <aside className="fixed top-0 left-0 h-full w-60 bg-[#0A0A0F] border-r border-white/5 flex flex-col z-50">
         {/* Logo */}
         <div className="px-5 py-5 border-b border-white/5">
-          <Image src="/logo-pinguim.png" alt="Pinguim" width={120} height={34} className="object-contain brightness-0 invert" />
+          <div className="w-36 [&>svg]:w-full"><WhitePinguimLogo /></div>
         </div>
 
         {/* Nav */}
@@ -69,8 +69,6 @@ export default async function PainelPage() {
             <LayoutDashboard size={16} />
             Dashboard
           </Link>
-
-          <Link href="/painel/lixeira" className="flex items-center gap-3 px-4 py-2.5 text-slate-400 hover:text-white text-sm"><Trash2 size={16}/>Lixeira</Link>
 
           <Link href="/painel/comercial" className="flex items-center gap-3 px-4 py-2.5 text-slate-400 hover:text-white text-sm"><Users size={16}/>Comercial</Link>
 
@@ -92,6 +90,8 @@ export default async function PainelPage() {
               <PlusCircle size={16} /> Nova Proposta
             </Link>
           </div>
+
+          <Link href="/painel/lixeira" className="flex items-center gap-3 px-4 py-2.5 text-slate-400 hover:text-white text-sm"><Trash2 size={16}/>Lixeira</Link>
         </nav>
 
         {/* User + Logout */}
