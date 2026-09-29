@@ -71,6 +71,7 @@ export default async function PainelPage() {
           </Link>
 
           <Link href="/painel/comercial" className="flex items-center gap-3 px-4 py-2.5 text-slate-400 hover:text-white text-sm"><Users size={16}/>Comercial</Link>
+          <Link href="/painel/operacional" className="flex items-center gap-3 px-4 py-2.5 text-slate-400 hover:text-white text-sm"><LayoutDashboard size={16}/>Operacional</Link>
 
           {/* Admin */}
           <Link
