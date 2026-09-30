@@ -29,3 +29,20 @@ test('HTML export is standalone, escapes notes and excludes financial data in ma
  assert.ok(!marketing.includes('R$'));assert.ok(marketing.includes('79.679'))
  assert.ok(!marketing.includes('Análise e próximos passos'))
 })
+test('Selected metrics apply to HTML including highlights',async()=>{
+ const {buildReportHtml}=await import('../src/lib/operations.ts')
+ const values=Array(60).fill(null);values[29]=22994.9;values[3]=79679
+ const html=buildReportHtml({key:'2026-08',label:'Agosto de 2026',values},undefined,'Completo','','',[3])
+ assert.ok(html.includes('79.679'));assert.ok(!html.includes('22.994,90'))
+ assert.ok(!html.includes('<h2>Meta Ads</h2>'));assert.ok(html.includes('<h2>Instagram</h2>'))
+})
+test('Available months are parsed dynamically and duplicate months rejected',()=>{
+ const rows=Array.from({length:7},()=>Array(60).fill(''))
+ rows[0][27]='CARDÁPIO DIGITAL';rows[0][52]='RESULTADO TOTAL'
+ rows[4][0]='PERIODO';rows[4][29]='RECEITA';rows[4][56]='RECEITA'
+ rows[5][0]='setembro/26';rows[5][10]='3668';rows[6][0]='outubro/26'
+ const csv=()=>rows.map(r=>r.join(',')).join('\n')
+ const months=parseMonths(csv());assert.deepEqual(months.map(m=>m.key),['2026-10','2026-09'])
+ assert.equal(months[1].values[10],3668);assert.equal(months[0].values[10],null)
+ rows[6][0]='setembro/26';assert.throws(()=>parseMonths(csv()),/duplicado/)
+})

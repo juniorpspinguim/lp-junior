@@ -24,7 +24,19 @@ export function parseNumber(value:string|undefined):number|null {
 export function parseMonths(csv:string):Month[]{
  const rows=parseCsv(csv)
  if(rows[4]?.[0]!=='PERIODO'||rows[4]?.[29]!=='RECEITA'||rows[4]?.[56]!=='RECEITA'||rows[0]?.[27]!=='CARDÁPIO DIGITAL'||rows[0]?.[52]!=='RESULTADO TOTAL') throw new Error('Formato da planilha alterado')
- return [{key:'2026-08',label:'Agosto de 2026',source:'agosto/26'},{key:'2026-07',label:'Julho de 2026',source:'julho/26'},{key:'2025-08',label:'Agosto de 2025',source:'agosto/25'}].map(p=>{const matches=rows.filter(r=>r[0]===p.source);if(matches.length!==1)throw new Error('Período ausente ou duplicado');return {key:p.key,label:p.label,values:matches[0].map(parseNumber)}})
+ const names=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro']
+ const months:Month[]=[]
+ for(const row of rows.slice(5)){
+  const match=row[0]?.trim().toLowerCase().match(/^([a-zç]+)\/(\d{2}|\d{4})$/)
+  if(!match)continue
+  const month=names.indexOf(match[1]);if(month<0)continue
+  const year=match[2].length===2?2000+Number(match[2]):Number(match[2])
+  const key=`${year}-${String(month+1).padStart(2,'0')}`
+  if(months.some(m=>m.key===key))throw new Error('Período duplicado')
+  months.push({key,label:`${names[month][0].toUpperCase()+names[month].slice(1)} de ${year}`,values:row.map(parseNumber)})
+ }
+ if(!months.length)throw new Error('Nenhum período encontrado')
+ return months.sort((a,b)=>b.key.localeCompare(a.key))
 }
 export function formatValue(v:number|null|undefined,kind:Metric['kind']){if(v==null)return 'Não informado';return kind==='money'?v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):v.toLocaleString('pt-BR',{maximumFractionDigits:2})+(kind==='percent'?'%':'')}
 export function comparison(current:number|null|undefined,previous:number|null|undefined,kind:Metric['kind']){
@@ -37,11 +49,11 @@ export function comparison(current:number|null|undefined,previous:number|null|un
 function escapeHtml(value:string) {
  return value.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!))
 }
-export function buildReportHtml(current:Month, previous:Month|undefined, version:string, notes:string, loadedAt:string) {
+export function buildReportHtml(current:Month, previous:Month|undefined, version:string, notes:string, loadedAt:string, selected?:number[]) {
  const e=escapeHtml
  const marketing=version==='Marketing'
- const visible=groups.map(g=>({...g,metrics:g.metrics.filter(m=>!marketing||!m.financial)})).filter(g=>g.metrics.length)
- const highlights=(marketing?[groups[0].metrics[1],groups[0].metrics[3],groups[4].metrics[0],groups[4].metrics[4]]:[groups[5].metrics[4],groups[4].metrics[1],groups[4].metrics[0],groups[0].metrics[1]])
+ const visible=groups.map(g=>({...g,metrics:g.metrics.filter(m=>(!marketing||!m.financial)&&(selected===undefined||selected.includes(m.index)))})).filter(g=>g.metrics.length)
+ const highlights=(marketing?[groups[0].metrics[1],groups[0].metrics[3],groups[4].metrics[0],groups[4].metrics[4]]:[groups[5].metrics[4],groups[4].metrics[1],groups[4].metrics[0],groups[0].metrics[1]]).filter(m=>selected===undefined||selected.includes(m.index))
  const timestamp=loadedAt && Number.isFinite(Date.parse(loadedAt))?new Date(loadedAt).toLocaleString('pt-BR',{timeZone:'America/Bahia'}):'Não disponível'
  return `<!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>Villa Bistrô — ${e(current.label)} — ${e(version)}</title><style>
