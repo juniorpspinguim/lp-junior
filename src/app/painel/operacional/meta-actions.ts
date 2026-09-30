@@ -1,5 +1,5 @@
 'use server'
-import { metaMetrics, validateMetaQuery, type MetaQuery } from '@/lib/meta-query'
+import { metaFields, metaValue, metaMetrics, validateMetaQuery, type MetaQuery } from '@/lib/meta-query'
 import { createClient } from '@/utils/supabase/server'
 
 export type MetaCheck = {ok:boolean; message:string; checkedAt?:string; account?:string; currency?:string; timezone?:string; metrics?:{label:string; value:string}[]}
@@ -23,12 +23,12 @@ export async function checkVillaMeta(input:MetaQuery):Promise<MetaCheck>{
  try{
   const account=await read(`${base}?fields=account_id,name,currency,timezone_name`)
   if(account.account_id!=='901463374171335')throw new Error('ACCOUNT')
-  const query=new URLSearchParams({fields:['account_id',...new Set(input.metrics)].join(','),level:'account',time_range:JSON.stringify({since:input.since,until:input.until}),limit:'1'})
+  const query=new URLSearchParams({fields:metaFields(input.metrics),level:'account',time_range:JSON.stringify({since:input.since,until:input.until}),limit:'1'})
   const insights=await read(`${base}/insights?${query}`)
   const row=insights.data?.[0]
   if(row&&row.account_id!=='901463374171335')throw new Error('ACCOUNT')
   const definitions=metaMetrics.filter(m=>input.metrics.includes(m.key))
-  const metrics=row?definitions.map(({key,label})=>{const n=row[key]==null?NaN:Number(row[key]);return {label,value:Number.isFinite(n)?n.toLocaleString('pt-BR',{maximumFractionDigits:2})+(['spend','cpc','cpm'].includes(key)?` ${account.currency}`:key==='ctr'?'%':''):'Não informado'}}):[]
+  const metrics=row?definitions.map(({key,label})=>{const n=metaValue(row,key);return {label,value:n!==null?n.toLocaleString('pt-BR',{maximumFractionDigits:2})+(['spend','cpc','cpm','cost_per_purchase'].includes(key)?` ${account.currency}`:key==='ctr'?'%':key==='roas'?'×':''):'Não informado'}}):[]
   return {ok:true,message:row?'Leitura confirmada para o período selecionado. Os dados da planilha permanecem separados.':'Conta acessível, mas sem resultados retornados para o período selecionado.',checkedAt,account:String(account.name),currency:String(account.currency),timezone:String(account.timezone_name),metrics}
  }catch(error){
   const code=error instanceof Error?error.message:''
