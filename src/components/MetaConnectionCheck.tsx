@@ -1,0 +1,8 @@
+'use client'
+import { useState, useTransition } from 'react'
+import { checkVillaMeta, type MetaCheck } from '@/app/painel/operacional/meta-actions'
+export default function MetaConnectionCheck(){
+ const [result,setResult]=useState<MetaCheck|null>(null)
+ const [pending,start]=useTransition()
+ return <section className="mb-6 rounded-2xl border border-blue-400/25 bg-blue-500/5 p-6"><h2 className="text-xl font-semibold">Meta Ads · Villa Bistrô</h2><p className="mt-2 text-sm text-slate-400">Conta 901463374171335 · teste de leitura de agosto de 2026. O teste não altera campanhas nem substitui os indicadores da planilha.</p><button disabled={pending} onClick={()=>start(async()=>{try{setResult(await checkVillaMeta())}catch{setResult({ok:false,message:'Falha de conexão. Tente novamente.'})}})} className="mt-5 rounded-xl bg-blue-600 px-5 py-3 disabled:opacity-50">{pending?'Consultando a Meta…':'Testar acesso à conta do Villa'}</button>{result&&<div role="status" className="mt-5"><p className={result.ok?'text-emerald-300':'text-amber-200'}>{result.message}</p>{result.account&&<p className="mt-2 text-sm text-slate-400">{result.account} · {result.currency} · {result.timezone}</p>}<div className="mt-4 grid gap-3 sm:grid-cols-3">{result.metrics?.map(m=><div key={m.label} className="rounded-xl bg-white/5 p-4"><p className="text-xs text-slate-400">{m.label}</p><p className="mt-2 text-lg">{m.value}</p></div>)}</div>{result.checkedAt&&<p className="mt-3 text-xs text-slate-500">Teste em {new Date(result.checkedAt).toLocaleString('pt-BR',{timeZone:'America/Bahia'})}. A sincronização automática ainda não está ativa.</p>}</div>}</section>
+}
