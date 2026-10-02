@@ -114,3 +114,12 @@ export function parse071Months(csv:string):Month[]{
  mapped[0][52]='RESULTADO TOTAL'
  return parseMonths(mapped.map(row=>row.map(cell=>'"'+cell.replaceAll('"','""')+'"').join(',')).join('\n'))
 }
+
+export function parse071Gviz(csv:string):Month[]{
+ const rows=parseCsv(csv)
+ if(rows[0]?.[45]!=='99'||rows[0]?.[57]!=='RESULTADO TOTAL'||rows[0]?.length<65)throw new Error('Formato alternativo da 071 alterado')
+ const headings=Array<string>(65).fill('');headings[0]='PERIODO';headings[29]='RECEITA';headings[59]='PEDIDOS';headings[61]='RECEITA'
+ const channels=[...rows[0]];channels[27]='CARDÁPIO DIGITAL';channels[52]='SALÃO'
+ const data=rows.slice(1).filter(row=>/^[a-zç]+\/\d{2,4}$/i.test(row[0]??''))
+ return parse071Months([channels,[],[],[],headings,...data].map(row=>row.map(cell=>'"'+cell.replaceAll('"','""')+'"').join(',')).join('\n'))
+}
