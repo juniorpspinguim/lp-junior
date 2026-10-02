@@ -40,7 +40,7 @@ export default async function OperationsPage() {
  if(owner){
   const client=clients.find(c=>c.id==='meta-269412715465914')
   if(client){
-   const context={clientName:'071 Burger',source:source071,defaultPeriod:'2026-09',warnings:{'2026-09':'Conferência pendente: a fonte registra setembro com 31 dias (o correto é 30). Pedidos totais registrados: 1.567; soma dos canais: 1.968, incluindo 401 da 99. Os valores abaixo preservam a planilha; médias diárias não são exibidas.'}}
+   const context={clientName:'071 Burger',source:source071,defaultPeriod:'2026-09'}
    try{client.pilot={...read071History(),...context}}catch{client.pilot={months:[],loadedAt:'',...context,error:'O histórico importado da 071 não está disponível. Verifique a configuração no servidor.'}}
   }
  }
