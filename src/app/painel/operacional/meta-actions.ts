@@ -37,7 +37,24 @@ export async function checkVillaMeta(input:MetaQuery):Promise<MetaCheck>{
  }
 }
 
-export type MetaAccountList={ok:boolean;message:string;accounts:{id:string;name:string;currency:string;status:number}[];after?:string}
+// Client identities confirmed by the owner; identification only, not import scheduling.
+const confirmedMetaClients: Record<string, string> = {
+ '269412715465914': '071 Burger',
+ '813887369940275': 'Sabor Paulista',
+ '311707364144292': 'Santa Feijuca',
+ '954186908847388': 'Milmar',
+ '1598681047433041': 'La Vecchia',
+ '278876081788281': 'Paixão Burger',
+ '901463374171335': 'Vila Bistrô Curitiba',
+ '1201227453843383': 'Primos Burger',
+ '1002707284053108': 'Jeane Garcia',
+ '1341257460763463': 'Maliburger Brotas',
+ '172384837459863': 'Maliburger Cidade Baixa',
+ '1515157350142699': 'Da Taly',
+ '375779597064086': 'Almaléa Sorvetes',
+}
+
+export type MetaAccountList={ok:boolean;message:string;accounts:{id:string;name:string;currency:string;status:number;client:string|null}[];after?:string}
 export async function listAuthorizedMetaAccounts(after?:string):Promise<MetaAccountList>{
  const empty={accounts:[]}
  const db=await createClient();const {data:{user}}=await db.auth.getUser()
@@ -53,7 +70,7 @@ export async function listAuthorizedMetaAccounts(after?:string):Promise<MetaAcco
  const response=await fetch(`https://graph.facebook.com/v25.0/me/adaccounts?${query}`,{headers:{Authorization:`Bearer ${token}`},cache:'no-store',signal:AbortSignal.timeout(20000)})
  const body=await response.json()
  if(!response.ok||body.error){const code=Number(body.error?.code);return {...empty,ok:false,message:code===190?'A autorização expirou ou foi revogada. Renove o token no servidor para consultar as contas.':code===10||code===200?'A Meta negou a consulta. Confira a permissão ads_read e os acessos do usuário.':'Não foi possível consultar as contas na Meta. Tente novamente.'}}
- const accounts=(Array.isArray(body.data)?body.data:[]).filter((a:{account_id?:string})=>/^\d+$/.test(a.account_id??'')).map((a:{account_id:string;name:string;currency:string;account_status:number})=>({id:a.account_id,name:String(a.name??''),currency:String(a.currency??''),status:Number(a.account_status)}))
+ const accounts=(Array.isArray(body.data)?body.data:[]).filter((a:{account_id?:string})=>/^\d+$/.test(a.account_id??'')).map((a:{account_id:string;name:string;currency:string;account_status:number})=>({id:a.account_id,name:String(a.name??''),currency:String(a.currency??''),status:Number(a.account_status),client:confirmedMetaClients[a.account_id]??null}))
  return {ok:true,message:accounts.length?'Contas visíveis para a autorização atual. Nenhuma métrica foi importada.':'Nenhuma conta retornada por esta autorização.',accounts,after:body.paging?.next?body.paging?.cursors?.after:undefined}
  }catch{return {...empty,ok:false,message:'A consulta não respondeu. Tente novamente. Nenhum dado foi importado.'}}
 }
