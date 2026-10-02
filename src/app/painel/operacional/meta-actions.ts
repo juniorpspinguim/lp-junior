@@ -36,3 +36,24 @@ export async function checkVillaMeta(input:MetaQuery):Promise<MetaCheck>{
   return {ok:false,checkedAt,message:messages[code]||'Não foi possível concluir a leitura na Meta. Nenhuma campanha ou dado da planilha foi alterado.'}
  }
 }
+
+export type MetaAccountList={ok:boolean;message:string;accounts:{id:string;name:string;currency:string;status:number}[];after?:string}
+export async function listAuthorizedMetaAccounts(after?:string):Promise<MetaAccountList>{
+ const empty={accounts:[]}
+ const db=await createClient();const {data:{user}}=await db.auth.getUser()
+ if(!user)return {...empty,ok:false,message:'Entre novamente no painel.'}
+ const {data:owner}=await db.from('proposals').select('id').eq('slug','7y3qope').eq('user_id',user.id).maybeSingle()
+ if(!owner)return {...empty,ok:false,message:'Você não tem acesso a esta autorização.'}
+ const token=process.env.META_ADS_ACCESS_TOKEN?.trim()
+ if(!token)return {...empty,ok:false,message:'A autorização do Meta não está configurada nesta publicação.'}
+ if(after&&(typeof after!=='string'||after.length>4096))return {...empty,ok:false,message:'Paginação inválida.'}
+ const query=new URLSearchParams({fields:'account_id,name,currency,account_status',limit:'100'})
+ if(after)query.set('after',after)
+ try{
+ const response=await fetch(`https://graph.facebook.com/v25.0/me/adaccounts?${query}`,{headers:{Authorization:`Bearer ${token}`},cache:'no-store',signal:AbortSignal.timeout(20000)})
+ const body=await response.json()
+ if(!response.ok||body.error){const code=Number(body.error?.code);return {...empty,ok:false,message:code===190?'A autorização expirou ou foi revogada. Renove o token no servidor para consultar as contas.':code===10||code===200?'A Meta negou a consulta. Confira a permissão ads_read e os acessos do usuário.':'Não foi possível consultar as contas na Meta. Tente novamente.'}}
+ const accounts=(Array.isArray(body.data)?body.data:[]).filter((a:{account_id?:string})=>/^\d+$/.test(a.account_id??'')).map((a:{account_id:string;name:string;currency:string;account_status:number})=>({id:a.account_id,name:String(a.name??''),currency:String(a.currency??''),status:Number(a.account_status)}))
+ return {ok:true,message:accounts.length?'Contas visíveis para a autorização atual. Nenhuma métrica foi importada.':'Nenhuma conta retornada por esta autorização.',accounts,after:body.paging?.next?body.paging?.cursors?.after:undefined}
+ }catch{return {...empty,ok:false,message:'A consulta não respondeu. Tente novamente. Nenhum dado foi importado.'}}
+}
