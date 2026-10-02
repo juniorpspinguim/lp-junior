@@ -1,4 +1,5 @@
 'use client'
+import {currentPeriod} from '@/lib/current-period'
 import { useState, useTransition } from 'react'
 import { checkVillaMeta, type MetaCheck } from '@/app/painel/operacional/meta-actions'
 import { metaMetrics, validateMetaQuery } from '@/lib/meta-query'
@@ -23,7 +24,7 @@ export default function MetaConnectionCheck({accountId="901463374171335",clientN
   <p className="mt-2 text-sm text-slate-400">Escolha as métricas e os dias que deseja consultar diretamente na Meta. Este filtro é independente do comparativo mensal do relatório.</p>
   <details className="mt-4 rounded-xl border border-white/10 p-4"><summary className="cursor-pointer text-sm font-medium">Filtros · {selected.length} métricas · {since.split('-').reverse().join('/')} a {until.split('-').reverse().join('/')}</summary><fieldset disabled={pending} className="mt-5 disabled:opacity-60">
    <legend className="text-sm font-semibold">Período do Meta Ads</legend>
-   <div className="my-3 flex flex-wrap gap-2">{[7,14,30].map(days=><button key={days} onClick={()=>recent(days)} className="rounded-lg bg-white/10 px-3 py-2 text-sm">Últimos {days} dias</button>)}</div>
+   <div className="my-3 flex flex-wrap gap-2"><button onClick={()=>{const month=currentPeriod();setSince(month.since);setUntil(month.until);setResult(null)}} className="rounded-lg bg-blue-600 px-3 py-2 text-sm">Mês atual · até hoje</button>{[7,14,30].map(days=><button key={days} onClick={()=>recent(days)} className="rounded-lg bg-white/10 px-3 py-2 text-sm">Últimos {days} dias</button>)}</div>
    <div className="flex flex-wrap gap-4">
     <label className="text-sm text-slate-300">De<input type="date" value={since} onChange={e=>{setSince(e.target.value);setResult(null)}} className="mt-2 block rounded-lg border border-white/15 bg-[#101521] p-3 text-white [color-scheme:dark]"/></label>
     <label className="text-sm text-slate-300">Até<input type="date" value={until} onChange={e=>{setUntil(e.target.value);setResult(null)}} className="mt-2 block rounded-lg border border-white/15 bg-[#101521] p-3 text-white [color-scheme:dark]"/></label>
