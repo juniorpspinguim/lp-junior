@@ -3,10 +3,10 @@ import { useState, useTransition } from 'react'
 import { checkVillaMeta, type MetaCheck } from '@/app/painel/operacional/meta-actions'
 import { metaMetrics, validateMetaQuery } from '@/lib/meta-query'
 
-export default function MetaConnectionCheck(){
+export default function MetaConnectionCheck({accountId="901463374171335",clientName="Villa Bistrô"}:{accountId?:string;clientName?:string}){
  const [result,setResult]=useState<MetaCheck|null>(null)
- const [since,setSince]=useState('2026-08-01')
- const [until,setUntil]=useState('2026-08-31')
+ const [since,setSince]=useState(accountId==='269412715465914'?'2026-09-01':'2026-08-01')
+ const [until,setUntil]=useState(accountId==='269412715465914'?'2026-09-30':'2026-08-31')
  const [selected,setSelected]=useState<string[]>(metaMetrics.map(m=>m.key))
  const [pending,start]=useTransition()
  const input={since,until,metrics:selected}
@@ -18,7 +18,8 @@ export default function MetaConnectionCheck(){
   setSince(local(start));setUntil(local(end));setResult(null)
  }
  return <section className="mb-6 rounded-2xl border border-blue-400/25 bg-blue-500/5 p-6">
-  <h2 className="text-xl font-semibold">Meta Ads · Villa Bistrô</h2>
+  <h2 className="text-xl font-semibold">Meta Ads · {clientName}</h2>
+  <p className="mt-2 text-sm text-blue-200">Conta vinculada · consulta disponível</p>
   <p className="mt-2 text-sm text-slate-400">Escolha as métricas e os dias que deseja consultar diretamente na Meta. Este filtro é independente do comparativo mensal do relatório.</p>
   <details className="mt-4 rounded-xl border border-white/10 p-4"><summary className="cursor-pointer text-sm font-medium">Filtros · {selected.length} métricas · {since.split('-').reverse().join('/')} a {until.split('-').reverse().join('/')}</summary><fieldset disabled={pending} className="mt-5 disabled:opacity-60">
    <legend className="text-sm font-semibold">Período do Meta Ads</legend>
@@ -31,7 +32,7 @@ export default function MetaConnectionCheck(){
    <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{metaMetrics.map(m=><label key={m.key} className="flex items-center gap-2 rounded-lg bg-white/5 p-3 text-sm"><input type="checkbox" checked={selected.includes(m.key)} onChange={()=>{setSelected(old=>old.includes(m.key)?old.filter(k=>k!==m.key):[...old,m.key]);setResult(null)}} className="h-4 w-4 accent-blue-500"/>{m.label}</label>)}</div>
   </fieldset></details>
   {validation&&<p className="mt-3 text-sm text-amber-200">{validation}</p>}
-  <button disabled={pending||!!validation} onClick={()=>start(async()=>{setResult(null);try{setResult(await checkVillaMeta(input))}catch{setResult({ok:false,message:'Falha de conexão. Tente novamente.'})}})} className="mt-5 rounded-xl bg-blue-600 px-5 py-3 disabled:opacity-50">{pending?'Consultando a Meta…':'Consultar Meta Ads'}</button>
+  <button disabled={pending||!!validation} onClick={()=>start(async()=>{setResult(null);try{setResult(await checkVillaMeta(input,accountId))}catch{setResult({ok:false,message:'Falha de conexão. Tente novamente.'})}})} className="mt-5 rounded-xl bg-blue-600 px-5 py-3 disabled:opacity-50">{pending?'Consultando a Meta…':'Consultar Meta Ads'}</button>
   {result&&<div role="status" className="mt-5">
    <p className={result.ok?'text-emerald-300':'text-amber-200'}>{result.message}</p>
    <p className="mt-2 text-sm text-slate-300">{since.split('-').reverse().join('/')} a {until.split('-').reverse().join('/')}</p>
