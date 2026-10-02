@@ -1,3 +1,4 @@
+import {confirmedMetaClients} from '@/lib/confirmed-meta-clients'
 import { unstable_cache } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
@@ -22,7 +23,7 @@ export default async function OperationsPage() {
   db.from('crm_contacts').select('id,restaurant_name,proposal_slug').eq('user_id',user.id).eq('stage','ganho'),
   db.from('proposals').select('slug,restaurant_name').eq('user_id',user.id).eq('status','approved').is('deleted_at',null)
  ])
- const clients:OperationsClient[]=owner?[{id:'villa',name:'Villa Bistrô',pilot}]:[]
+ const clients:OperationsClient[]=owner?Object.entries(confirmedMetaClients).map(([accountId,name])=>accountId==='901463374171335'?{id:'villa',name,pilot}:{id:`meta-${accountId}`,name}):[]
  const names=new Set(clients.map(c=>c.name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim()))
  for(const row of [...(proposals.data??[]).map(p=>({id:p.slug,name:p.restaurant_name,slug:p.slug})),...(contacts.data??[]).map(c=>({id:c.id,name:c.restaurant_name,slug:c.proposal_slug}))]){
   const name=row.name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim()

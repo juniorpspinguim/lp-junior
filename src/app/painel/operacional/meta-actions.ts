@@ -1,4 +1,5 @@
 'use server'
+import {confirmedMetaClients} from '@/lib/confirmed-meta-clients'
 import { metaFields, metaValue, metaMetrics, validateMetaQuery, type MetaQuery } from '@/lib/meta-query'
 import { createClient } from '@/utils/supabase/server'
 
@@ -35,23 +36,6 @@ export async function checkVillaMeta(input:MetaQuery):Promise<MetaCheck>{
   const messages:Record<string,string>={TOKEN:'A Meta recusou o token: pode estar expirado, revogado ou inválido. Será necessário renovar a autorização.',PERMISSION:'A Meta negou a permissão de leitura. Precisamos conferir ads_read, o acesso do seu usuário à conta e o nível de acesso do aplicativo.',ACCOUNT:'A Meta não disponibilizou a conta esperada. Confira se este token pertence ao usuário com acesso ao Villa.',RATE:'A Meta limitou temporariamente as consultas. Aguarde antes de testar novamente.'}
   return {ok:false,checkedAt,message:messages[code]||'Não foi possível concluir a leitura na Meta. Nenhuma campanha ou dado da planilha foi alterado.'}
  }
-}
-
-// Client identities confirmed by the owner; identification only, not import scheduling.
-const confirmedMetaClients: Record<string, string> = {
- '269412715465914': '071 Burger',
- '813887369940275': 'Sabor Paulista',
- '311707364144292': 'Santa Feijuca',
- '954186908847388': 'Milmar',
- '1598681047433041': 'La Vecchia',
- '278876081788281': 'Paixão Burger',
- '901463374171335': 'Vila Bistrô Curitiba',
- '1201227453843383': 'Primos Burger',
- '1002707284053108': 'Jeane Garcia',
- '1341257460763463': 'Maliburger Brotas',
- '172384837459863': 'Maliburger Cidade Baixa',
- '1515157350142699': 'Da Taly',
- '375779597064086': 'Almaléa Sorvetes',
 }
 
 export type MetaAccountList={ok:boolean;message:string;accounts:{id:string;name:string;currency:string;status:number;client:string|null}[];after?:string}
