@@ -13,10 +13,14 @@ const readVillaSheet=unstable_cache(async()=>{
 },['villa-operations-sheet'],{revalidate:60,tags:['villa-operations-sheet']})
 const source071='https://docs.google.com/spreadsheets/d/1M1v_M3Paorlk2UP1kwcrcdv4o5a5H6GzBd_xcEMyT8o/edit'
 const read071Sheet=unstable_cache(async()=>{
- const response=await fetch(source071.replace('/edit','/export?format=csv&gid=0'),{cache:'no-store',signal:AbortSignal.timeout(15000)})
- if(!response.ok)throw new Error('Fonte indisponível')
+ const urls=[source071.replace('/edit','/export?format=csv&gid=0')]
+ for(const url of urls){try{
+ const response=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(25000)})
+ if(!response.ok)continue
  return {months:parse071Months(await response.text()),loadedAt:new Date().toISOString()}
-},['071-operations-sheet'],{revalidate:60,tags:['071-operations-sheet']})
+ }catch{continue}}
+ throw new Error('Fonte indisponível')
+},['071-operations-sheet-v2'],{revalidate:60,tags:['071-operations-sheet']})
 export default async function OperationsPage() {
  const db=await createClient(); const {data:{user}}=await db.auth.getUser()
  if(!user)redirect('/login')
