@@ -1,7 +1,7 @@
 import { reportBrand } from './report-brand.js'
 export type Metric = {label:string; index:number; kind:'number'|'money'|'percent'; financial?:boolean}
 export type Month = {key:string; label:string; values:(number|null)[]}
-export type Pilot = {months:Month[]; loadedAt:string; error?:string; clientName?:string; source?:string; warnings?:Record<string,string>; defaultPeriod?:string}
+export type Pilot = {months:Month[]; loadedAt:string; error?:string; clientName?:string; source?:string; warnings?:Record<string,string>; defaultPeriod?:string; sourceMode?:'snapshot'}
 export const sourceUrl = 'https://docs.google.com/spreadsheets/d/1W9SPeyrA9NHn7qnLeB6Kmw7TsAmGqZqs7sf54CijmzU/edit?gid=0'
 export const groups:{title:string; metrics:Metric[]}[] = [
 {title:'Instagram',metrics:[{label:'Seguidores',index:3,kind:'number'},{label:'Seguidores ganhos',index:4,kind:'number'},{label:'Alcance',index:5,kind:'number'},{label:'Visitas ao perfil',index:7,kind:'number'}]},
