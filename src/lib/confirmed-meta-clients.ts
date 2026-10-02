@@ -11,7 +11,7 @@ export const confirmedMetaClients: Record<string, string> = {
  '1002707284053108': 'Jeane Garcia',
  '1341257460763463': 'Maliburger Brotas',
  '172384837459863': 'Maliburger Cidade Baixa',
- '1515157350142699': 'Da Taly',
+ '1515157350142699': 'Da Talli',
  '375779597064086': 'Almaléa Sorvetes',
 }
 
