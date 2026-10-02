@@ -31,7 +31,7 @@ export default function OperationsWorkspace({pilot}:{pilot:Pilot}) {
  const previous=compare?pilot.months.find(m=>m.key===baseline):undefined
  const noteKey=`${period}-${version}`
  const reportNotes=notes[noteKey]||''
- const html=useMemo(()=>{if(tab!=='Relatórios'||!current)return '';const included=groups.filter(g=>reportChannels.includes(g.title)).flatMap(g=>g.metrics.map(m=>m.index));const content=buildReportHtml(current,previous,version,[pilot.warnings?.[period],reportNotes].filter(Boolean).join("\n\n"),pilot.loadedAt,included,clientName);return reportDetailed?content.replaceAll('<details class="metric-details">','<details open class="metric-details">'):content},[tab,current,previous,version,[pilot.warnings?.[period],reportNotes].filter(Boolean).join("\n\n"),pilot.loadedAt,reportChannels,reportDetailed,clientName,pilot.warnings,period])
+ const html=useMemo(()=>{if(tab!=='Relatórios'||!current)return '';const included=groups.filter(g=>reportChannels.includes(g.title)).flatMap(g=>g.metrics.map(m=>m.index));const content=buildReportHtml(current,previous,version,[pilot.warnings?.[period],reportNotes].filter(Boolean).join("\n\n"),pilot.loadedAt,included,clientName);return reportDetailed?content.replaceAll('<details class="metric-details">','<details open class="metric-details">'):content},[tab,current,previous,version,reportNotes,pilot.loadedAt,reportChannels,reportDetailed,clientName,pilot.warnings,period])
  function viewReport(){
   const url=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}))
   const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';document.body.appendChild(link);link.click();link.remove()
