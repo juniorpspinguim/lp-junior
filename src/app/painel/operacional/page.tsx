@@ -1,7 +1,7 @@
 import { unstable_cache } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
-import OperationsWorkspace from '@/components/OperationsWorkspace'
+import OperationsPortfolio, { type OperationsClient } from '@/components/OperationsPortfolio'
 import { parseMonths, type Pilot } from '@/lib/operations'
 export const dynamic = 'force-dynamic'
 const readVillaSheet=unstable_cache(async()=>{
@@ -18,5 +18,16 @@ export default async function OperationsPage() {
  if(owner){try{
  pilot=await readVillaSheet()
  }catch{pilot={months:[],loadedAt:'',error:'Não foi possível ler a planilha do Villa. Tente atualizar novamente. Nenhum dado foi substituído por zero.'}}}
- return <OperationsWorkspace pilot={pilot}/>
+ const [contacts,proposals]=await Promise.all([
+  db.from('crm_contacts').select('id,restaurant_name,proposal_slug').eq('user_id',user.id).eq('stage','ganho'),
+  db.from('proposals').select('slug,restaurant_name').eq('user_id',user.id).eq('status','approved').is('deleted_at',null)
+ ])
+ const clients:OperationsClient[]=owner?[{id:'villa',name:'Villa Bistrô',pilot}]:[]
+ const names=new Set(clients.map(c=>c.name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim()))
+ for(const row of [...(proposals.data??[]).map(p=>({id:p.slug,name:p.restaurant_name,slug:p.slug})),...(contacts.data??[]).map(c=>({id:c.id,name:c.restaurant_name,slug:c.proposal_slug}))]){
+  const name=row.name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim()
+  if(row.slug==='7y3qope'&&owner||names.has(name))continue
+  names.add(name);clients.push({id:row.id,name:row.name})
+ }
+ return <OperationsPortfolio clients={clients} error={contacts.error||proposals.error?'Não foi possível carregar toda a carteira. Tente atualizar a página.':undefined}/>
 }

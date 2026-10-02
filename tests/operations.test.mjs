@@ -56,3 +56,13 @@ test('Planning follows the reporting month including year rollover',async()=>{
  assert.ok(december.includes('janeiro de 2027'))
  assert.ok(!december.includes('15/09'))
 })
+test('Single-month HTML omits comparison columns, changes and prior-period labels',async()=>{
+ const {buildReportHtml}=await import('../src/lib/operations.ts')
+ const values=Array(60).fill(10)
+ const html=buildReportHtml({key:'2026-08',label:'Agosto de 2026',values},undefined,'Completo','','')
+ assert.ok(!html.includes('Comparativo com'))
+ assert.ok(!html.includes('<th>Variação</th>'))
+ assert.ok(!html.includes('Sem comparação'))
+ assert.ok(!html.includes('em relação ao período comparado'))
+ assert.ok(html.includes('Agosto de 2026'))
+})
