@@ -39,7 +39,9 @@ export default async function PainelPage() {
 
   const { data: proposals } = await supabase
     .from('proposals')
-    .select('*')
+    .select('id,created_at,restaurant_name,services,service_value,ad_value,contract_duration,status,slug,proposal_number,proposal_year,deleted_at')
+    .eq('user_id', data.user.id)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
   const list     = ((proposals ?? []) as Proposal[]).filter(p => !p.deleted_at)

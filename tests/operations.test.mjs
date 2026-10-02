@@ -46,3 +46,13 @@ test('Available months are parsed dynamically and duplicate months rejected',()=
  assert.equal(months[1].values[10],3668);assert.equal(months[0].values[10],null)
  rows[6][0]='setembro/26';assert.throws(()=>parseMonths(csv()),/duplicado/)
 })
+test('Planning follows the reporting month including year rollover',async()=>{
+ const {buildReportHtml}=await import('../src/lib/operations.ts')
+ const values=Array(60).fill(null)
+ const august=buildReportHtml({key:'2026-08',label:'Agosto de 2026',values},undefined,'Completo','','')
+ assert.ok(august.includes('Ações para setembro.'))
+ assert.ok(august.includes('15/09 · Dia do Cliente'))
+ const december=buildReportHtml({key:'2026-12',label:'Dezembro de 2026',values},undefined,'Completo','','')
+ assert.ok(december.includes('janeiro de 2027'))
+ assert.ok(!december.includes('15/09'))
+})

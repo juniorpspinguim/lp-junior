@@ -1,6 +1,8 @@
 'use client'
-import { useState } from 'react'
+import { useState, useMemo, useTransition } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { refreshVillaSheet } from '@/app/painel/operacional/refresh-actions'
 import { ArrowLeft, RefreshCw, Mic } from 'lucide-react'
 import OperationsHistory from './OperationsHistory'
 import MetaConnectionCheck from './MetaConnectionCheck'
@@ -8,6 +10,9 @@ import WhitePinguimLogo from './WhitePinguimLogo'
 import { groups, sourceUrl, formatValue, comparison, buildReportHtml, type Pilot } from '@/lib/operations'
 const sources=['Meta Ads','Instagram','Google Ads','Cardápio Web','Saipos','Vucafood','Takeat','Google Meu Negócio','iFood']
 export default function OperationsWorkspace({pilot}:{pilot:Pilot}) {
+ const router=useRouter()
+ const [refreshing,startRefresh]=useTransition()
+ const [refreshError,setRefreshError]=useState('')
  const [tab,setTab]=useState('Visão geral')
  const [period,setPeriod]=useState(pilot.months.some(m=>m.key==='2026-08')?'2026-08':pilot.months[0]?.key||'')
  const [baseline,setBaseline]=useState(pilot.months.some(m=>m.key==='2026-07')?'2026-07':pilot.months[1]?.key||'')
@@ -17,7 +22,8 @@ export default function OperationsWorkspace({pilot}:{pilot:Pilot}) {
  const current=pilot.months.find(m=>m.key===period)
  const previous=pilot.months.find(m=>m.key===baseline)
  const noteKey=`${period}-${version}`
- const html=current?buildReportHtml(current,previous,version,notes[noteKey]||'',pilot.loadedAt):''
+ const reportNotes=notes[noteKey]||''
+ const html=useMemo(()=>tab==='Relatórios'&&current?buildReportHtml(current,previous,version,reportNotes,pilot.loadedAt):'',[tab,current,previous,version,reportNotes,pilot.loadedAt])
  function viewReport(){
   const url=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}))
   const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';document.body.appendChild(link);link.click();link.remove()
@@ -35,8 +41,9 @@ export default function OperationsWorkspace({pilot}:{pilot:Pilot}) {
  return <main className="min-h-screen bg-[#090c13] px-5 py-8 text-white md:px-10"><div className="mx-auto max-w-7xl">
  <header className="flex items-center justify-between border-b border-white/10 pb-6"><div className="w-36 [&>svg]:w-full"><WhitePinguimLogo/></div><Link href="/painel" className="flex items-center gap-2 text-sm text-slate-400"><ArrowLeft size={16}/>Painel</Link></header>
  <div className="my-8"><p className="text-xs uppercase tracking-[.2em] text-blue-400">Operacional · Cliente piloto</p><h1 className="mt-3 text-4xl font-bold">Villa Bistrô</h1><p className="mt-3 text-slate-400">Resultados mensais, leitura por canal e relatório para o cliente.</p></div>
- <div className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-blue-400/20 bg-blue-500/5 p-4 text-sm text-slate-300"><div><p>Fonte atual: <a href={sourceUrl} target="_blank" rel="noreferrer" className="text-blue-300 underline">planilha do Villa</a>. Leitura ao abrir ou atualizar esta página.</p><p className="mt-1 text-xs text-slate-400">{pilot.loadedAt?`Consultada em ${new Date(pilot.loadedAt).toLocaleString('pt-BR',{timeZone:'America/Bahia'})}. `:''}As integrações diretas e a voz ainda não estão ativas.</p></div><button onClick={()=>window.location.reload()} className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2"><RefreshCw size={15}/>Atualizar planilha</button></div>
+ <div className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-blue-400/20 bg-blue-500/5 p-4 text-sm text-slate-300"><div><p>Fonte atual: <a href={sourceUrl} target="_blank" rel="noreferrer" className="text-blue-300 underline">planilha do Villa</a>. Leitura reaproveitada por até 1 minuto. Atualizar busca os dados mais recentes.</p><p className="mt-1 text-xs text-slate-400">{pilot.loadedAt?`Consultada em ${new Date(pilot.loadedAt).toLocaleString('pt-BR',{timeZone:'America/Bahia'})}. `:''}As integrações diretas e a voz ainda não estão ativas.</p></div><button disabled={refreshing} onClick={()=>startRefresh(async()=>{setRefreshError('');try{await refreshVillaSheet();router.refresh()}catch{setRefreshError('Não foi possível atualizar. Tente novamente.')}})} className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2"><RefreshCw size={15} className={refreshing?'animate-spin':''}/>{refreshing?'Atualizando…':'Atualizar planilha'}</button></div>
  <nav className="mb-6 flex gap-2" aria-label="Área operacional">{['Visão geral','Conexões','Relatórios'].map(t=><button key={t} onClick={()=>setTab(t)} className={`rounded-xl px-4 py-3 text-sm ${tab===t?'bg-blue-600':'bg-white/5 text-slate-400'}`}>{t}</button>)}</nav>
+ {refreshError&&<p role="alert" className="mb-4 text-amber-200">{refreshError}</p>}
  {pilot.error && <p role="alert" className="mb-6 rounded-xl bg-amber-500/10 p-5 text-amber-200">{pilot.error}</p>}
  {current && tab!=='Conexões' && <div className="mb-6 flex flex-wrap gap-5"><label className="text-sm text-slate-400">Mês analisado<select value={period} onChange={e=>{setPeriod(e.target.value);setCopyStatus('')}} className="ml-3 rounded-lg border border-white/15 bg-[#101521] p-2 text-white">{pilot.months.map(m=><option key={m.key} value={m.key}>{m.label}</option>)}</select></label><label className="text-sm text-slate-400">Comparar com<select value={baseline} onChange={e=>{setBaseline(e.target.value);setCopyStatus('')}} className="ml-3 rounded-lg border border-white/15 bg-[#101521] p-2 text-white">{pilot.months.map(m=><option key={m.key} value={m.key}>{m.label}</option>)}</select></label><p className="w-full text-xs text-slate-500">Períodos mensais disponíveis na planilha. Novos meses aparecem após atualizar a fonte; ainda não há recorte por dia.</p></div>}
  {tab==='Visão geral' && current && <>
